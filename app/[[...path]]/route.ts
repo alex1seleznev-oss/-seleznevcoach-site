@@ -31,6 +31,13 @@ function prepareSnapshot(html: string) {
   return html;
 }
 
+function stripCustomHydration(html: string) {
+  return html
+    .replace(/<link\b[^>]*href=["']\/legacy-next\/static\/chunks\/[^"']+["'][^>]*>/gi, '')
+    .replace(/<script\b[^>]*src=["']\/legacy-next\/static\/chunks\/[^"']+["'][^>]*><\/script>/gi, '')
+    .replace(/<script>\s*(?:\(self\.__next_f=self\.__next_f\|\|\[\]\)|self\.__next_f)[\s\S]*?<\/script>/gi, '');
+}
+
 function replaceTitle(html: string, title: string) {
   if (/<title>[\s\S]*?<\/title>/i.test(html)) return html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`);
   return injectHead(html, `<title>${title}</title>`);
@@ -194,6 +201,7 @@ export async function GET(request: Request, context: { params: Promise<{ path?: 
   html = prepareSnapshot(html);
 
   if (customPage) {
+    html = stripCustomHydration(html);
     html = replaceMain(html, customPage.mainHtml);
     html = removeJsonLd(html);
     for (const item of customStructuredData(pathname)) html = addJsonLd(html, item);
