@@ -27,7 +27,7 @@ function sanitizeSnapshot(html: string) {
   html = html
     .replace(/<link\b[^>]*href=["']\/_next\/static\/chunks\/[^"']+["'][^>]*>/gi, '')
     .replace(/<script\b[^>]*src=["']\/_next\/static\/chunks\/[^"']+["'][^>]*><\/script>/gi, '')
-    .replace(/<script\b[^>]*>[\s\S]*?self\.__next_f[\s\S]*?<\/script>/gi, '')
+    .replace(/<script>\s*(?:\(self\.__next_f=self\.__next_f\|\|\[\]\)|self\.__next_f)[\s\S]*?<\/script>/gi, '')
     .replace(/\/_next\/static\/css\//g, '/legacy-next/static/css/');
 
   if (!html.includes('src="/site.js"')) {
