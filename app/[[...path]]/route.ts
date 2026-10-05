@@ -83,7 +83,7 @@ function removeJsonLd(html: string) {
 }
 
 function addJsonLd(html: string, data: unknown) {
-  const json = JSON.stringify(data).replace(/</g, '\\u003c');
+  const json = JSON.stringify(data).replace(/</g, '\u003c');
   return html.replace(/<body([^>]*)>/i, `<body$1><script type="application/ld+json">${json}</script>`);
 }
 
@@ -161,6 +161,13 @@ function applyCustomRouteSeo(html: string, pathname: string) {
   return injectHead(html, `<link rel="alternate" hreflang="ru" href="${canonical}"><link rel="alternate" hreflang="x-default" href="${canonical}">`);
 }
 
+function fixCustomLanguageSwitch(html: string) {
+  return html.replace(
+    /<nav class="language-switch"[\s\S]*?<\/nav>/i,
+    '<nav class="language-switch" aria-label="Язык сайта"><span lang="ru" aria-current="page">Русский</span></nav>'
+  );
+}
+
 function addSeoEnhancements(html: string, pathname: string) {
   const target = seoTargets[pathname];
   if (target) {
@@ -206,6 +213,7 @@ export async function GET(request: Request, context: { params: Promise<{ path?: 
     html = removeJsonLd(html);
     for (const item of customStructuredData(pathname)) html = addJsonLd(html, item);
     html = applyCustomRouteSeo(html, pathname);
+    html = fixCustomLanguageSwitch(html);
   }
 
   html = addSeoEnhancements(html, pathname);
