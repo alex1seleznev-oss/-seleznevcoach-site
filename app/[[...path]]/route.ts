@@ -1,11 +1,11 @@
+import snapshot from '../../snapshot/pages.json';
 import { defaultOgImage, seoTargets } from '../../lib/seo-targets';
 import { seoPages } from '../../lib/seo-pages';
 import { extraSeoPages } from '../../lib/seo-pages-extra';
 
 const PUBLIC_ORIGIN = 'https://seleznevcoach.ru';
-const UPSTREAM_ORIGIN = 'http://186.246.31.3:3000';
-const UPSTREAM_HOST = 'seleznevcoach.ru';
 const allSeoPages = { ...seoPages, ...extraSeoPages };
+const capturedPages = snapshot.pages as Record<string, string>;
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -22,13 +22,15 @@ function replaceTitle(html: string, title: string) {
   return html.replace(/<head([^>]*)>/i, `<head$1><title>${title}</title>`);
 }
 
+function injectHead(html: string, markup: string) {
+  return html.replace(/<head([^>]*)>/i, `<head$1>${markup}`);
+}
+
 function replaceMeta(html: string, key: 'name' | 'property', attr: string, value: string) {
   const escaped = attr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const re = new RegExp(`<meta([^>]*?)${key}=["']${escaped}["']([^>]*?)>`, 'i');
-  if (re.test(html)) {
-    return html.replace(re, `<meta ${key}="${attr}" content="${value}">`);
-  }
-  return html.replace(/<head([^>]*)>/i, `<head$1><meta ${key}="${attr}" content="${value}">`);
+  if (re.test(html)) return html.replace(re, `<meta ${key}="${attr}" content="${value}">`);
+  return injectHead(html, `<meta ${key}="${attr}" content="${value}">`);
 }
 
 function replaceCanonical(html: string, href: string) {
@@ -37,20 +39,12 @@ function replaceCanonical(html: string, href: string) {
   return injectHead(html, `<link rel="canonical" href="${href}">`);
 }
 
-function injectHead(html: string, markup: string) {
-  return html.replace(/<head([^>]*)>/i, `<head$1>${markup}`);
-}
-
 function setRobotsMeta(html: string, indexable: boolean) {
   html = html
     .replace(/<meta[^>]+name=["']robots["'][^>]*>/gi, '')
     .replace(/<meta[^>]+name=["']googlebot["'][^>]*>/gi, '');
-
   const content = indexable ? 'index,follow,max-image-preview:large' : 'noindex,nofollow,noarchive';
-  return injectHead(
-    html,
-    `<meta name="robots" content="${content}"><meta name="googlebot" content="${content}">`
-  );
+  return injectHead(html, `<meta name="robots" content="${content}"><meta name="googlebot" content="${content}">`);
 }
 
 function russianEquivalent(pathname: string) {
@@ -107,7 +101,6 @@ function customStructuredData(pathname: string) {
     jobTitle: 'Тренер по бегу и общей физической подготовке',
     sameAs: ['https://t.me/seleznevcoach', 'https://t.me/runadapt', 'https://www.instagram.com/seleznevcoach/'],
   };
-
   const label = routeLabel(pathname);
   const breadcrumb = {
     '@context': 'https://schema.org',
@@ -125,49 +118,37 @@ function customStructuredData(pathname: string) {
   };
 
   if (pathname.startsWith('/training/')) {
-    return [
-      person,
-      breadcrumb,
-      {
-        '@context': 'https://schema.org',
-        '@type': 'Service',
-        name: label,
-        description: target?.description,
-        url: canonical,
-        provider: { '@id': `${PUBLIC_ORIGIN}/#alexander` },
-        serviceType: 'Персональная подготовка по бегу',
-        areaServed: ['Москва', 'Онлайн'],
-      },
-    ];
-  }
-
-  return [
-    person,
-    breadcrumb,
-    {
+    return [person, breadcrumb, {
       '@context': 'https://schema.org',
-      '@type': 'BlogPosting',
-      headline: target?.title.replace(' | Александр Селезнёв', ''),
+      '@type': 'Service',
+      name: label,
       description: target?.description,
       url: canonical,
-      mainEntityOfPage: canonical,
-      author: { '@id': `${PUBLIC_ORIGIN}/#alexander` },
-      image: defaultOgImage,
-    },
-  ];
+      provider: { '@id': `${PUBLIC_ORIGIN}/#alexander` },
+      serviceType: 'Персональная подготовка по бегу',
+      areaServed: ['Москва', 'Онлайн'],
+    }];
+  }
+
+  return [person, breadcrumb, {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: target?.title.replace(' | Александр Селезнёв', ''),
+    description: target?.description,
+    url: canonical,
+    mainEntityOfPage: canonical,
+    author: { '@id': `${PUBLIC_ORIGIN}/#alexander` },
+    image: defaultOgImage,
+  }];
 }
 
 function applyCustomRouteSeo(html: string, pathname: string) {
   const canonical = publicUrl(pathname);
-
   html = replaceCanonical(html, canonical);
   html = replaceMeta(html, 'property', 'og:url', canonical);
-
   html = html.replace(/<link[^>]+rel=["']alternate["'][^>]+hreflang=["'][^"']+["'][^>]*>/gi, '');
   html = html.replace(/<link[^>]+hreflang=["'][^"']+["'][^>]+rel=["']alternate["'][^>]*>/gi, '');
-  html = injectHead(html, `<link rel="alternate" hreflang="ru" href="${canonical}"><link rel="alternate" hreflang="x-default" href="${canonical}">`);
-
-  return html;
+  return injectHead(html, `<link rel="alternate" hreflang="ru" href="${canonical}"><link rel="alternate" hreflang="x-default" href="${canonical}">`);
 }
 
 function addSeoEnhancements(html: string, pathname: string) {
@@ -180,68 +161,32 @@ function addSeoEnhancements(html: string, pathname: string) {
     html = replaceMeta(html, 'name', 'twitter:title', target.title);
     html = replaceMeta(html, 'name', 'twitter:description', target.description);
   }
-
   html = replaceMeta(html, 'name', 'twitter:card', 'summary_large_image');
   html = replaceMeta(html, 'property', 'og:image', defaultOgImage);
   html = replaceMeta(html, 'name', 'twitter:image', defaultOgImage);
-
   if (!/hreflang=["']x-default["']/i.test(html)) {
-    const xDefaultPath = russianEquivalent(pathname);
-    html = injectHead(html, `<link rel="alternate" hreflang="x-default" href="${publicUrl(xDefaultPath)}">`);
+    html = injectHead(html, `<link rel="alternate" hreflang="x-default" href="${publicUrl(russianEquivalent(pathname))}">`);
   }
-
   return html;
 }
 
-export async function GET(
-  request: Request,
-  context: { params: Promise<{ path?: string[] }> }
-) {
+export async function GET(request: Request, context: { params: Promise<{ path?: string[] }> }) {
   const params = await context.params;
   const pathname = params.path?.length ? `/${params.path.join('/')}` : '/';
-  const incoming = new URL(request.url);
   const productionHost = isProductionHost(request);
   const customPage = allSeoPages[pathname];
-  const upstreamPath = customPage?.shellPath || pathname;
-  const target = `${UPSTREAM_ORIGIN}${upstreamPath}${customPage ? '' : incoming.search}`;
+  const sourcePath = customPage?.shellPath || pathname;
+  let html = capturedPages[sourcePath];
 
-  const upstream = await fetch(target, {
-    cache: 'no-store',
-    redirect: 'manual',
-    headers: {
-      host: UPSTREAM_HOST,
-      'user-agent': request.headers.get('user-agent') || 'SeleznevCoachEdge/1.0',
-      accept: request.headers.get('accept') || '*/*',
-      rsc: customPage ? '' : request.headers.get('rsc') || '',
-      'next-router-state-tree': customPage ? '' : request.headers.get('next-router-state-tree') || '',
-      'next-url': customPage ? '' : request.headers.get('next-url') || '',
-    },
-  });
-
-  if (upstream.status >= 300 && upstream.status < 400) {
-    const location = upstream.headers.get('location');
-    if (location) {
-      const normalized = location.replace(UPSTREAM_ORIGIN, PUBLIC_ORIGIN);
-      return new Response(null, { status: upstream.status, headers: { location: normalized } });
-    }
-  }
-
-  const contentType = upstream.headers.get('content-type') || '';
-  if (!contentType.includes('text/html')) {
-    const headers: Record<string, string> = {
-      'content-type': contentType || 'application/octet-stream',
-      'cache-control': upstream.headers.get('cache-control') || 'public, max-age=300',
-      'x-content-type-options': 'nosniff',
-    };
-    if (!productionHost) headers['x-robots-tag'] = 'noindex, nofollow, noarchive';
-
-    return new Response(await upstream.arrayBuffer(), {
-      status: upstream.status,
-      headers,
+  if (!html) {
+    return new Response('Not Found', {
+      status: 404,
+      headers: {
+        'content-type': 'text/plain; charset=utf-8',
+        'x-robots-tag': 'noindex, nofollow, noarchive',
+      },
     });
   }
-
-  let html = await upstream.text();
 
   if (customPage) {
     html = replaceMain(html, customPage.mainHtml);
@@ -252,8 +197,7 @@ export async function GET(
   }
 
   html = addSeoEnhancements(html, pathname);
-  const targetSeo = seoTargets[pathname];
-  const indexable = productionHost && targetSeo?.indexable !== false;
+  const indexable = productionHost && seoTargets[pathname]?.indexable !== false;
   html = setRobotsMeta(html, indexable);
 
   const headers: Record<string, string> = {
@@ -264,8 +208,5 @@ export async function GET(
   };
   if (!indexable) headers['x-robots-tag'] = 'noindex, nofollow, noarchive';
 
-  return new Response(html, {
-    status: customPage ? 200 : upstream.status,
-    headers,
-  });
+  return new Response(html, { status: 200, headers });
 }
