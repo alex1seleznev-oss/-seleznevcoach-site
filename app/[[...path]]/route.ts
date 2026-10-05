@@ -2,11 +2,18 @@ import { defaultOgImage, seoTargets } from '../../lib/seo-targets';
 import { seoPages } from '../../lib/seo-pages';
 import { extraSeoPages } from '../../lib/seo-pages-extra';
 
-const ORIGIN = 'https://seleznevcoach.ru';
+const PUBLIC_ORIGIN = 'https://seleznevcoach.ru';
+const UPSTREAM_ORIGIN = 'http://186.246.31.3:3000';
+const UPSTREAM_HOST = 'seleznevcoach.ru';
 const allSeoPages = { ...seoPages, ...extraSeoPages };
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+function isProductionHost(request: Request) {
+  const host = new URL(request.url).hostname.toLowerCase();
+  return host === 'seleznevcoach.ru' || host === 'www.seleznevcoach.ru';
+}
 
 function replaceTitle(html: string, title: string) {
   if (/<title>[\s\S]*?<\/title>/i.test(html)) {
@@ -34,47 +41,16 @@ function injectHead(html: string, markup: string) {
   return html.replace(/<head([^>]*)>/i, `<head$1>${markup}`);
 }
 
-function injectPreviewGuards(html: string) {
+function setRobotsMeta(html: string, indexable: boolean) {
   html = html
     .replace(/<meta[^>]+name=["']robots["'][^>]*>/gi, '')
     .replace(/<meta[^>]+name=["']googlebot["'][^>]*>/gi, '');
 
+  const content = indexable ? 'index,follow,max-image-preview:large' : 'noindex,nofollow,noarchive';
   return injectHead(
     html,
-    '<meta name="robots" content="noindex,nofollow,noarchive"><meta name="googlebot" content="noindex,nofollow,noarchive">'
+    `<meta name="robots" content="${content}"><meta name="googlebot" content="${content}">`
   );
-}
-
-function rewriteProductionAssets(html: string) {
-  const assetRoots = ['/_next/', '/media/', '/fonts/', '/favicon.svg'];
-
-  for (const root of assetRoots) {
-    const escaped = root.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const attrs = new RegExp(`(src|href|poster)=(['"])${escaped}`, 'gi');
-    html = html.replace(attrs, (_match, attr, quote) => `${attr}=${quote}${ORIGIN}${root}`);
-  }
-
-  html = html.replace(
-    /(srcset)=(['"])([^'"]+)(['"])/gi,
-    (_match, attr, quote, value, closingQuote) => {
-      const rewritten = value
-        .split(',')
-        .map((part: string) => {
-          const trimmed = part.trim();
-          const space = trimmed.indexOf(' ');
-          const url = space === -1 ? trimmed : trimmed.slice(0, space);
-          const descriptor = space === -1 ? '' : trimmed.slice(space);
-          if (url.startsWith('/_next/') || url.startsWith('/media/') || url.startsWith('/fonts/')) {
-            return `${ORIGIN}${url}${descriptor}`;
-          }
-          return trimmed;
-        })
-        .join(', ');
-      return `${attr}=${quote}${rewritten}${closingQuote}`;
-    }
-  );
-
-  return html;
 }
 
 function russianEquivalent(pathname: string) {
@@ -83,8 +59,8 @@ function russianEquivalent(pathname: string) {
   return pathname;
 }
 
-function futureUrl(pathname: string) {
-  return `${ORIGIN}${pathname === '/' ? '' : pathname}`;
+function publicUrl(pathname: string) {
+  return `${PUBLIC_ORIGIN}${pathname === '/' ? '' : pathname}`;
 }
 
 function replaceMain(html: string, mainHtml: string) {
@@ -121,13 +97,13 @@ function routeLabel(pathname: string) {
 
 function customStructuredData(pathname: string) {
   const target = seoTargets[pathname];
-  const canonical = futureUrl(pathname);
+  const canonical = publicUrl(pathname);
   const person = {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    '@id': `${ORIGIN}/#alexander`,
+    '@id': `${PUBLIC_ORIGIN}/#alexander`,
     name: 'Александр Селезнёв',
-    url: ORIGIN,
+    url: PUBLIC_ORIGIN,
     jobTitle: 'Тренер по бегу и общей физической подготовке',
     sameAs: ['https://t.me/seleznevcoach', 'https://t.me/runadapt', 'https://www.instagram.com/seleznevcoach/'],
   };
@@ -137,12 +113,12 @@ function customStructuredData(pathname: string) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Главная', item: `${ORIGIN}/` },
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: `${PUBLIC_ORIGIN}/` },
       {
         '@type': 'ListItem',
         position: 2,
         name: pathname.startsWith('/journal/') ? 'Журнал' : 'Подготовка',
-        item: pathname.startsWith('/journal/') ? `${ORIGIN}/journal` : `${ORIGIN}/training/online`,
+        item: pathname.startsWith('/journal/') ? `${PUBLIC_ORIGIN}/journal` : `${PUBLIC_ORIGIN}/training/online`,
       },
       { '@type': 'ListItem', position: 3, name: label, item: canonical },
     ],
@@ -158,7 +134,7 @@ function customStructuredData(pathname: string) {
         name: label,
         description: target?.description,
         url: canonical,
-        provider: { '@id': `${ORIGIN}/#alexander` },
+        provider: { '@id': `${PUBLIC_ORIGIN}/#alexander` },
         serviceType: 'Персональная подготовка по бегу',
         areaServed: ['Москва', 'Онлайн'],
       },
@@ -175,14 +151,14 @@ function customStructuredData(pathname: string) {
       description: target?.description,
       url: canonical,
       mainEntityOfPage: canonical,
-      author: { '@id': `${ORIGIN}/#alexander` },
+      author: { '@id': `${PUBLIC_ORIGIN}/#alexander` },
       image: defaultOgImage,
     },
   ];
 }
 
 function applyCustomRouteSeo(html: string, pathname: string) {
-  const canonical = futureUrl(pathname);
+  const canonical = publicUrl(pathname);
 
   html = replaceCanonical(html, canonical);
   html = replaceMeta(html, 'property', 'og:url', canonical);
@@ -211,7 +187,7 @@ function addSeoEnhancements(html: string, pathname: string) {
 
   if (!/hreflang=["']x-default["']/i.test(html)) {
     const xDefaultPath = russianEquivalent(pathname);
-    html = injectHead(html, `<link rel="alternate" hreflang="x-default" href="${futureUrl(xDefaultPath)}">`);
+    html = injectHead(html, `<link rel="alternate" hreflang="x-default" href="${publicUrl(xDefaultPath)}">`);
   }
 
   return html;
@@ -224,35 +200,48 @@ export async function GET(
   const params = await context.params;
   const pathname = params.path?.length ? `/${params.path.join('/')}` : '/';
   const incoming = new URL(request.url);
+  const productionHost = isProductionHost(request);
   const customPage = allSeoPages[pathname];
   const upstreamPath = customPage?.shellPath || pathname;
-  const target = `${ORIGIN}${upstreamPath}${customPage ? '' : incoming.search}`;
+  const target = `${UPSTREAM_ORIGIN}${upstreamPath}${customPage ? '' : incoming.search}`;
 
   const upstream = await fetch(target, {
     cache: 'no-store',
+    redirect: 'manual',
     headers: {
-      'user-agent': request.headers.get('user-agent') || 'SeleznevCoachPreview/1.0',
-      accept: request.headers.get('accept') || 'text/html,application/xhtml+xml',
+      host: UPSTREAM_HOST,
+      'user-agent': request.headers.get('user-agent') || 'SeleznevCoachEdge/1.0',
+      accept: request.headers.get('accept') || '*/*',
       rsc: customPage ? '' : request.headers.get('rsc') || '',
       'next-router-state-tree': customPage ? '' : request.headers.get('next-router-state-tree') || '',
       'next-url': customPage ? '' : request.headers.get('next-url') || '',
     },
   });
 
+  if (upstream.status >= 300 && upstream.status < 400) {
+    const location = upstream.headers.get('location');
+    if (location) {
+      const normalized = location.replace(UPSTREAM_ORIGIN, PUBLIC_ORIGIN);
+      return new Response(null, { status: upstream.status, headers: { location: normalized } });
+    }
+  }
+
   const contentType = upstream.headers.get('content-type') || '';
   if (!contentType.includes('text/html')) {
+    const headers: Record<string, string> = {
+      'content-type': contentType || 'application/octet-stream',
+      'cache-control': upstream.headers.get('cache-control') || 'public, max-age=300',
+      'x-content-type-options': 'nosniff',
+    };
+    if (!productionHost) headers['x-robots-tag'] = 'noindex, nofollow, noarchive';
+
     return new Response(await upstream.arrayBuffer(), {
       status: upstream.status,
-      headers: {
-        'content-type': contentType || 'application/octet-stream',
-        'x-robots-tag': 'noindex, nofollow, noarchive',
-        'cache-control': 'private, no-store, max-age=0',
-      },
+      headers,
     });
   }
 
   let html = await upstream.text();
-  html = injectPreviewGuards(html);
 
   if (customPage) {
     html = replaceMain(html, customPage.mainHtml);
@@ -262,17 +251,21 @@ export async function GET(
     html = applyCustomRouteSeo(html, pathname);
   }
 
-  html = rewriteProductionAssets(html);
   html = addSeoEnhancements(html, pathname);
+  const targetSeo = seoTargets[pathname];
+  const indexable = productionHost && targetSeo?.indexable !== false;
+  html = setRobotsMeta(html, indexable);
+
+  const headers: Record<string, string> = {
+    'content-type': 'text/html; charset=utf-8',
+    'cache-control': 'private, no-store, max-age=0',
+    'referrer-policy': 'strict-origin-when-cross-origin',
+    'x-content-type-options': 'nosniff',
+  };
+  if (!indexable) headers['x-robots-tag'] = 'noindex, nofollow, noarchive';
 
   return new Response(html, {
     status: customPage ? 200 : upstream.status,
-    headers: {
-      'content-type': 'text/html; charset=utf-8',
-      'x-robots-tag': 'noindex, nofollow, noarchive',
-      'cache-control': 'private, no-store, max-age=0',
-      'referrer-policy': 'strict-origin-when-cross-origin',
-      'x-content-type-options': 'nosniff',
-    },
+    headers,
   });
 }
