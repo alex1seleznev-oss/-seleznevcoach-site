@@ -16,3 +16,19 @@ if (await exists(source)) {
 } else {
   console.log('No captured public/_next directory found.');
 }
+
+const chunksDir = path.join(legacy, 'static', 'chunks');
+if (await exists(chunksDir)) {
+  for (const name of await fs.readdir(chunksDir)) {
+    if (!name.startsWith('webpack-') || !name.endsWith('.js')) continue;
+    const file = path.join(chunksDir, name);
+    const sourceText = await fs.readFile(file, 'utf8');
+    const patched = sourceText
+      .replaceAll('s.p="/_next/"', 's.p="/legacy-next/"')
+      .replaceAll("s.p='/_next/'", "s.p='/legacy-next/'");
+    if (patched !== sourceText) {
+      await fs.writeFile(file, patched);
+      console.log(`Patched legacy webpack public path in ${name}.`);
+    }
+  }
+}
