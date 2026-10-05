@@ -23,13 +23,8 @@ function injectBodyEnd(html: string, markup: string) {
   return html.replace(/<\/body>/i, `${markup}</body>`);
 }
 
-function sanitizeSnapshot(html: string) {
-  html = html
-    .replace(/<link\b[^>]*href=["']\/_next\/static\/chunks\/[^"']+["'][^>]*>/gi, '')
-    .replace(/<script\b[^>]*src=["']\/_next\/static\/chunks\/[^"']+["'][^>]*><\/script>/gi, '')
-    .replace(/<script>\s*(?:\(self\.__next_f=self\.__next_f\|\|\[\]\)|self\.__next_f)[\s\S]*?<\/script>/gi, '')
-    .replace(/\/_next\/static\/css\//g, '/legacy-next/static/css/');
-
+function prepareSnapshot(html: string) {
+  html = html.replace(/\/_next\/static\//g, '/legacy-next/static/');
   if (!html.includes('src="/site.js"')) {
     html = injectBodyEnd(html, '<script src="/site.js" defer></script>');
   }
@@ -37,9 +32,7 @@ function sanitizeSnapshot(html: string) {
 }
 
 function replaceTitle(html: string, title: string) {
-  if (/<title>[\s\S]*?<\/title>/i.test(html)) {
-    return html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`);
-  }
+  if (/<title>[\s\S]*?<\/title>/i.test(html)) return html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`);
   return injectHead(html, `<title>${title}</title>`);
 }
 
@@ -198,7 +191,7 @@ export async function GET(request: Request, context: { params: Promise<{ path?: 
     });
   }
 
-  html = sanitizeSnapshot(html);
+  html = prepareSnapshot(html);
 
   if (customPage) {
     html = replaceMain(html, customPage.mainHtml);
