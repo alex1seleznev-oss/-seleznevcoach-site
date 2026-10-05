@@ -1,5 +1,6 @@
 (() => {
   const GA_ID = 'G-C2R5SCLQZ0';
+  const METRIKA_ID = 113445081;
   const CONSENT_KEY = 'seleznevcoach_analytics_consent';
   const isProduction = ['seleznevcoach.ru', 'www.seleznevcoach.ru'].includes(window.location.hostname);
 
@@ -12,7 +13,7 @@
     window.dataLayer.push(arguments);
   }
 
-  function loadAnalytics() {
+  function loadGoogleAnalytics() {
     if (!isProduction || window.__seleznevGaLoaded) return;
     window.__seleznevGaLoaded = true;
     window.dataLayer = window.dataLayer || [];
@@ -28,9 +29,41 @@
     document.head.appendChild(script);
   }
 
+  function loadYandexMetrika() {
+    if (!isProduction || window.__seleznevYmLoaded) return;
+    window.__seleznevYmLoaded = true;
+
+    window.ym = window.ym || function () {
+      (window.ym.a = window.ym.a || []).push(arguments);
+    };
+    window.ym.l = Date.now();
+
+    window.ym(METRIKA_ID, 'init', {
+      clickmap: true,
+      trackLinks: true,
+      accurateTrackBounce: true,
+      webvisor: true,
+      ecommerce: false,
+    });
+
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://mc.yandex.ru/metrika/tag.js';
+    document.head.appendChild(script);
+  }
+
+  function loadAnalytics() {
+    if (!isProduction) return;
+    loadGoogleAnalytics();
+    loadYandexMetrika();
+  }
+
   function track(name, params = {}) {
-    if (!analyticsAllowed() || !window.__seleznevGaLoaded) return;
-    gtag('event', name, params);
+    if (!analyticsAllowed()) return;
+    if (window.__seleznevGaLoaded) gtag('event', name, params);
+    if (window.__seleznevYmLoaded && typeof window.ym === 'function') {
+      window.ym(METRIKA_ID, 'reachGoal', name, params);
+    }
   }
 
   function setConsent(value) {
@@ -52,7 +85,7 @@
     box.setAttribute('role', 'dialog');
     box.setAttribute('aria-label', 'Настройки аналитики');
     box.style.cssText = 'position:fixed;left:16px;right:16px;bottom:16px;z-index:10000;max-width:760px;margin:auto;background:#111;color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:16px;box-shadow:0 16px 50px rgba(0,0,0,.35);font:14px/1.45 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
-    box.innerHTML = '<div style="font-weight:700;font-size:15px;margin-bottom:6px">Аналитика сайта</div><div style="opacity:.82;margin-bottom:14px">Используем Google Analytics только с вашего согласия, чтобы понимать, какие страницы и услуги полезны. Необходимые функции сайта работают и без аналитики. <a href="/cookies" style="color:inherit;text-decoration:underline">Подробнее</a>.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" data-consent="granted" style="border:0;border-radius:999px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer">Разрешить аналитику</button><button type="button" data-consent="denied" style="border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:10px 16px;background:transparent;color:#fff;font:inherit;cursor:pointer">Только необходимые</button></div>';
+    box.innerHTML = '<div style="font-weight:700;font-size:15px;margin-bottom:6px">Аналитика сайта</div><div style="opacity:.82;margin-bottom:14px">Используем Google Analytics и Яндекс Метрику только с вашего согласия, чтобы понимать, какие страницы и услуги полезны. Необходимые функции сайта работают и без аналитики. <a href="/cookies" style="color:inherit;text-decoration:underline">Подробнее</a>.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" data-consent="granted" style="border:0;border-radius:999px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer">Разрешить аналитику</button><button type="button" data-consent="denied" style="border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:10px 16px;background:transparent;color:#fff;font:inherit;cursor:pointer">Только необходимые</button></div>';
     box.addEventListener('click', (event) => {
       const button = event.target instanceof Element ? event.target.closest('[data-consent]') : null;
       if (!button) return;
