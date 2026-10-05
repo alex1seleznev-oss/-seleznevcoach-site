@@ -2,6 +2,7 @@ import { seoTargets } from '../../lib/seo-targets';
 
 const ORIGIN = 'https://seleznevcoach.ru';
 const LASTMOD = '2026-10-05';
+const PROD_HOSTS = new Set(['seleznevcoach.ru', 'www.seleznevcoach.ru']);
 
 function esc(value: string) {
   return value
@@ -40,11 +41,13 @@ function priority(pathname: string) {
 
 function changefreq(pathname: string) {
   if (pathname === '/' || pathname === '/en' || pathname === '/journal' || pathname === '/en/journal') return 'weekly';
-  if (pathname.includes('/journal/')) return 'monthly';
   return 'monthly';
 }
 
-export function GET() {
+export function GET(request: Request) {
+  const host = new URL(request.url).hostname.toLowerCase();
+  const production = PROD_HOSTS.has(host);
+
   const paths = Object.entries(seoTargets)
     .filter(([, target]) => target.indexable !== false)
     .map(([pathname]) => pathname)
@@ -64,11 +67,11 @@ export function GET() {
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${body}\n</urlset>\n`;
 
-  return new Response(xml, {
-    headers: {
-      'content-type': 'application/xml; charset=utf-8',
-      'cache-control': 'public, max-age=300',
-      'x-robots-tag': 'noindex, nofollow, noarchive',
-    },
-  });
+  const headers: Record<string, string> = {
+    'content-type': 'application/xml; charset=utf-8',
+    'cache-control': 'public, max-age=300',
+  };
+  if (!production) headers['x-robots-tag'] = 'noindex, nofollow, noarchive';
+
+  return new Response(xml, { headers });
 }
