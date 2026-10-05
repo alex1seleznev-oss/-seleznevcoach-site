@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/prepare-legacy-next.mjs",
     "build": "next build",
+    "postbuild": "node scripts/restore-legacy-next.mjs",
     "start": "next start"
   },
   "dependencies": {
