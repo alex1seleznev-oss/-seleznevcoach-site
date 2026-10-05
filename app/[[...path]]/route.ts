@@ -15,15 +15,32 @@ function isProductionHost(request: Request) {
   return host === 'seleznevcoach.ru' || host === 'www.seleznevcoach.ru';
 }
 
+function injectHead(html: string, markup: string) {
+  return html.replace(/<head([^>]*)>/i, `<head$1>${markup}`);
+}
+
+function injectBodyEnd(html: string, markup: string) {
+  return html.replace(/<\/body>/i, `${markup}</body>`);
+}
+
+function sanitizeSnapshot(html: string) {
+  html = html
+    .replace(/<link\b[^>]*href=["']\/_next\/static\/chunks\/[^"']+["'][^>]*>/gi, '')
+    .replace(/<script\b[^>]*src=["']\/_next\/static\/chunks\/[^"']+["'][^>]*><\/script>/gi, '')
+    .replace(/<script\b[^>]*>[\s\S]*?self\.__next_f[\s\S]*?<\/script>/gi, '')
+    .replace(/\/_next\/static\/css\//g, '/legacy-next/static/css/');
+
+  if (!html.includes('src="/site.js"')) {
+    html = injectBodyEnd(html, '<script src="/site.js" defer></script>');
+  }
+  return html;
+}
+
 function replaceTitle(html: string, title: string) {
   if (/<title>[\s\S]*?<\/title>/i.test(html)) {
     return html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`);
   }
-  return html.replace(/<head([^>]*)>/i, `<head$1><title>${title}</title>`);
-}
-
-function injectHead(html: string, markup: string) {
-  return html.replace(/<head([^>]*)>/i, `<head$1>${markup}`);
+  return injectHead(html, `<title>${title}</title>`);
 }
 
 function replaceMeta(html: string, key: 'name' | 'property', attr: string, value: string) {
@@ -59,13 +76,6 @@ function publicUrl(pathname: string) {
 
 function replaceMain(html: string, mainHtml: string) {
   return html.replace(/<main\b[\s\S]*?<\/main>/i, mainHtml.trim());
-}
-
-function stripHydrationScripts(html: string) {
-  return html
-    .replace(/<script\b[^>]*src=["'][^"']*\/_next\/[^"']*["'][^>]*><\/script>/gi, '')
-    .replace(/<script>\s*\(self\.__next_f[\s\S]*?<\/script>/gi, '')
-    .replace(/<script>\s*self\.__next_f[\s\S]*?<\/script>/gi, '');
 }
 
 function removeJsonLd(html: string) {
@@ -188,9 +198,10 @@ export async function GET(request: Request, context: { params: Promise<{ path?: 
     });
   }
 
+  html = sanitizeSnapshot(html);
+
   if (customPage) {
     html = replaceMain(html, customPage.mainHtml);
-    html = stripHydrationScripts(html);
     html = removeJsonLd(html);
     for (const item of customStructuredData(pathname)) html = addJsonLd(html, item);
     html = applyCustomRouteSeo(html, pathname);
