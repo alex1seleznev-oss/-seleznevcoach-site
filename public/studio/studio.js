@@ -16,7 +16,7 @@ const sample=`Что записать [[после интервалов?]]
 
 Что ты изменишь в следующий раз?
 Оставь в дневнике одну короткую заметку, к которой вернёшься перед следующей такой работой.`;
-const makePost=(source,caption='')=>({id:crypto.randomUUID(),source,caption,theme:0,photo:'',time:'',selected:false,layouts:{},sourceRefs:[]});
+const makePost=(source,caption='')=>({id:crypto.randomUUID(),source,caption,theme:0,photo:'',time:'',selected:false,layouts:{},sourceRefs:[],artworks:{}});
 let posts=[makePost(sample,'Сразу после финиша детали помнятся лучше. Что ты обычно записываешь после интервальной тренировки?')],index=0,slide=0,db,storageError=false;
 const themes=CarouselDesign.themes;
 let sourceMaterial={title:'',url:'',text:'',editedAt:'',truncated:false};
@@ -26,9 +26,9 @@ function note(s){$('status').textContent=s}
 function persist(){if(!db)return;const tx=db.transaction('studio','readwrite');tx.objectStore('studio').put({posts,index,sourceMaterial},'work');tx.oncomplete=()=>{storageError=false;$('saved').textContent='Сохранено на устройстве'};tx.onerror=()=>{storageError=true;$('saved').textContent='Ошибка сохранения';note('Не удалось сохранить черновик. Скачай ZIP перед закрытием.')}}
 function list(){const sel=$('posts');sel.replaceChildren(...posts.map((p,i)=>new Option((i+1)+'. '+title(p),i)));sel.value=index}
 function refresh(){list();$('source').value=current().source;$('caption').value=current().caption;$('clearPhoto').hidden=!current().photo;$('photo').value='';[...$('themes').children].forEach((b,i)=>b.setAttribute('aria-pressed',i===current().theme));preview()}
-async function draw(canvas,p,n){return CarouselDesign.draw(canvas,p,n,blocks(p.source))}
+async function draw(canvas,p,n){if(p.artworks?.[n]){const img=new Image();img.src=p.artworks[n];await img.decode();const c=canvas.getContext('2d');c.clearRect(0,0,1080,1350);c.drawImage(img,0,0,1080,1350);return 'artwork'}return CarouselDesign.draw(canvas,p,n,blocks(p.source))}
 let renderId=0;
-async function preview(){const token=++renderId,all=blocks(current().source);slide=Math.min(Math.max(0,slide),Math.max(0,all.length-1));$('slideLayout').value=current().layouts?.[slide]||'auto';$('slideLayout').disabled=slide===0||slide===all.length-1;$('page').textContent=(all.length?slide+1:0)+' / '+all.length;$('prev').disabled=!slide;$('next').disabled=slide>=all.length-1;const c=document.createElement('canvas');c.width=1080;c.height=1350;try{await draw(c,current(),slide);if(token===renderId)$('cover').getContext('2d').drawImage(c,0,0)}catch(e){note(e.message)}}
+async function preview(){const token=++renderId,all=blocks(current().source);slide=Math.min(Math.max(0,slide),Math.max(0,all.length-1));$('slideLayout').value=current().layouts?.[slide]||'auto';$('slideLayout').disabled=slide===0||slide===all.length-1;$('clearArtwork').hidden=!current().artworks?.[slide];$('page').textContent=(all.length?slide+1:0)+' / '+all.length;$('prev').disabled=!slide;$('next').disabled=slide>=all.length-1;const c=document.createElement('canvas');c.width=1080;c.height=1350;try{await draw(c,current(),slide);if(token===renderId)$('cover').getContext('2d').drawImage(c,0,0)}catch(e){note(e.message)}}
 $('prev').onclick=()=>{slide--;preview()};$('next').onclick=()=>{slide++;preview()};
 $('posts').onchange=e=>{index=Number(e.target.value);slide=0;refresh();persist()};
 $('source').oninput=()=>{current().source=$('source').value;list();preview();persist()};
@@ -72,3 +72,6 @@ $('slideLayout').onchange=()=>{current().layouts??={};current().layouts[slide]=$
 $('clearSource').onclick=()=>{sourceMaterial={title:'',url:'',text:'',editedAt:'',truncated:false};refreshSource();persist();$('sourceStatus').textContent='Источник очищен на этом устройстве.'};
 $('sourceToSeries').onclick=()=>tab('series');
 $('loadNotion').onclick=async()=>{const b=$('loadNotion');b.disabled=true;try{const owner=$('notionOwner').value||$('owner').value;if(!owner)throw Error('Введи ключ доступа владельца. Токен Notion вводится только в настройках сервера.');const res=await fetch('/api/studio/notion',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+owner},body:JSON.stringify({page:$('sourceUrl').value})});const data=await res.json();if(!res.ok)throw Error(data.error||'Не удалось загрузить источник.');sourceMaterial={title:data.title,url:data.url,text:data.text,editedAt:data.editedAt,truncated:data.truncated};refreshSource();persist();$('sourceStatus').textContent=data.truncated?'Загружен фрагмент. Есть пропущенные блоки или достигнут лимит. Сверь с оригиналом.':'Заметка загружена. Проверь текст и ограничения перед генерацией.'}catch(e){$('sourceStatus').textContent=e.message}finally{b.disabled=false}};
+
+$('artwork').onchange=async e=>{const file=e.target.files[0];if(!file)return;const p=current(),n=slide,url=URL.createObjectURL(file);try{const img=new Image();img.src=url;await img.decode();if(Math.abs(img.width/img.height-.8)>.025)throw Error('Нужен готовый слайд 4:5. Подготовь его без обрезки лица.');const c=document.createElement('canvas');c.width=1080;c.height=1350;c.getContext('2d').drawImage(img,0,0,1080,1350);p.artworks??={};p.artworks[n]=c.toDataURL('image/jpeg',.95);preview();persist();note('Готовый слайд добавлен. Исходный текст черновика сохранён отдельно.')}catch(e){note(e.message)}finally{URL.revokeObjectURL(url);$('artwork').value=''}};
+$('clearArtwork').onclick=()=>{if(current().artworks)delete current().artworks[slide];preview();persist()};
