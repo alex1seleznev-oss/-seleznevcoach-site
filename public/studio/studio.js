@@ -1,6 +1,6 @@
 'use strict';
 const $=id=>document.getElementById(id);
-const sample=`Что записать после интервалов?
+const sample=`Что записать [[после интервалов?]]
 
 01. План на тренировку
 Запиши дистанцию, число повторений и длительность отдыха. Потом можно будет сравнить замысел с тем, что получилось.
@@ -20,7 +20,7 @@ const makePost=(source,caption='')=>({id:crypto.randomUUID(),source,caption,them
 let posts=[makePost(sample,'Сразу после финиша детали помнятся лучше. Что ты обычно записываешь после интервальной тренировки?')],index=0,slide=0,db,storageError=false;
 const themes=CarouselDesign.themes;
 let sourceMaterial={title:'',url:'',text:'',editedAt:'',truncated:false};
-const current=()=>posts[index], title=p=>p.source.trim().split('\n')[0]||'Без названия';
+const current=()=>posts[index], title=p=>p.source.trim().split('\n')[0].replace(/\[\[|\]\]/g,'')||'Без названия';
 function blocks(source){let [first,...rest]=source.trim().split('\n');return [first,...rest.join('\n').trim().split(/\n\s*\n/)].filter(x=>x.trim()).map(x=>x.trim())}
 function note(s){$('status').textContent=s}
 function persist(){if(!db)return;const tx=db.transaction('studio','readwrite');tx.objectStore('studio').put({posts,index,sourceMaterial},'work');tx.oncomplete=()=>{storageError=false;$('saved').textContent='Сохранено на устройстве'};tx.onerror=()=>{storageError=true;$('saved').textContent='Ошибка сохранения';note('Не удалось сохранить черновик. Скачай ZIP перед закрытием.')}}
@@ -38,7 +38,7 @@ $('photo').onchange=async e=>{const p=current(),file=e.target.files[0];if(!file)
 $('clearPhoto').onclick=()=>{current().photo='';refresh();persist()};
 function tab(id){document.querySelectorAll('main section').forEach(s=>s.hidden=s.id!==id);document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));note('');if(id==='publish')queue()}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>tab(b.dataset.tab));
-function assignment(){const topics=$('topics').value.trim().split(/\n+/).filter(Boolean);if(!topics.length||topics.length>20)throw Error('Укажи от 1 до 20 тем.');return 'Напиши '+topics.length+' каруселей на русском для бегунов-любителей, по одной на каждую тему. Голос тренера Александра Селезнёва. На пост 6–10 слайдов. Первая строка — заголовок обложки. Затем пустая строка перед каждым слайдом: короткий заголовок, перенос строки и до 200 знаков пояснения. Последний слайд — практический вопрос. В конце с новой строки «Подпись:» и подпись к посту. Между постами отдельная строка из трёх дефисов. Обычный текст без Markdown и вводных слов. Объясняй механизм, давай конкретный пример, не выдумывай исследования, результаты клиентов или цитаты. Темы:\n'+topics.join('\n')+sourcePrompt()}
+function assignment(){const topics=$('topics').value.trim().split(/\n+/).filter(Boolean);if(!topics.length||topics.length>20)throw Error('Укажи от 1 до 20 тем.');return 'Напиши '+topics.length+' каруселей на русском для бегунов-любителей, по одной на каждую тему. Голос тренера Александра Селезнёва. На пост 6–10 слайдов. Первая строка — заголовок обложки. В заголовках выделяй одну ключевую фразу из 1–3 слов через [[двойные квадратные скобки]]. Затем пустая строка перед каждым слайдом: короткий заголовок, перенос строки и до 200 знаков пояснения. Последний слайд — практический вопрос. В конце с новой строки «Подпись:» и подпись к посту. Между постами отдельная строка из трёх дефисов. Обычный текст без Markdown и вводных слов. Объясняй механизм, давай конкретный пример, не выдумывай исследования, результаты клиентов или цитаты. Темы:\n'+topics.join('\n')+sourcePrompt()}
 $('prompt').onclick=async()=>{try{const s=assignment();try{await navigator.clipboard.writeText(s);note('Задание скопировано. Вставь его в ChatGPT.')}catch{window.prompt('Скопируй задание',s)}}catch(e){note(e.message)}};
 function parseSeries(s){const chunks=s.trim().split(/^\s*---\s*$/m).map(x=>x.trim()).filter(Boolean);if(!chunks.length||chunks.length>20)throw Error('Нужна серия из 1–20 постов.');return chunks.map((x,i)=>{const match=/^Подпись:\s*/im.exec(x);const source=match?x.slice(0,match.index).trim():x;const p=makePost(source,match?x.slice(match.index+match[0].length).trim():'');p.sourceRefs=sourceReferences();validate(p,i);return p})}
 function validate(p,i){const count=blocks(p.source).length;if(count<2||count>10)throw Error('Для поста «'+title(p).slice(0,60)+'» нужно 2–10 слайдов. Сейчас '+count+'.');if(p.caption.length>2200)throw Error('Сократи подпись до 2200 знаков.')}
