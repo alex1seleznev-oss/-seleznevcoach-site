@@ -41,7 +41,10 @@ async function relocateRuntime(directory) {
     if (item.isDirectory()) await relocateRuntime(file);
     else if (item.name.endsWith('.js')) {
       const source = await fs.readFile(file, 'utf8');
-      const relocated = source.replaceAll('/_next/', '/legacy-next/');
+      const relocated = source.replaceAll('/_next/', '/legacy-next/')
+        .replace(/https:\/\/t\.me\/seleznevcoach(?![A-Za-z0-9_])/g, 'https://t.me/seleznevcoach_bot?start=site')
+        .replaceAll('Лично тренеру', 'Telegram-бот').replaceAll('Личный Telegram', 'Telegram-бот')
+        .replaceAll('Message Alexander on Telegram', 'Open Telegram bot').replaceAll('Message Alexander', 'Open Telegram bot');
       if (source !== relocated) await fs.writeFile(file, relocated);
     }
   }

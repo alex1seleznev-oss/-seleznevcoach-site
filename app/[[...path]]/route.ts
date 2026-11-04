@@ -25,12 +25,12 @@ function injectBodyEnd(html: string, markup: string) {
 
 function prepareSnapshot(html: string) {
   html = html.replace(/\/_next\/static\//g, '/legacy-next/static/');
-  // Keep the public personal profile in structured data; route contact links to the bot.
-  html = html.replace(/<a\b[^>]*href=["']https:\/\/t\.me\/seleznevcoach["'][^>]*>[\s\S]*?<\/a>/gi, (anchor) =>
-    anchor.replace('https://t.me/seleznevcoach', 'https://t.me/seleznevcoach_bot?start=site')
-      .replace('Лично тренеру', 'Telegram-бот').replace('Личный Telegram', 'Telegram-бот')
-      .replace('Message Alexander on Telegram', 'Open Telegram bot').replace('Message Alexander', 'Open Telegram bot')
-  );
+  // Update HTML and captured React payload together to keep hydration consistent.
+  html = html.replace(/https:\/\/t\.me\/seleznevcoach(?![A-Za-z0-9_])/g, 'https://t.me/seleznevcoach_bot?start=site')
+    .replaceAll('Лично тренеру', 'Telegram-бот').replaceAll('Личный Telegram', 'Telegram-бот')
+    .replaceAll('Message Alexander on Telegram', 'Open Telegram bot').replaceAll('Message Alexander', 'Open Telegram bot');
+  // Captured filenames are fixed; invalidate old browser copies of patched scripts.
+  html = html.replace(/(src=["']\/legacy-next\/[^"']+\.js)(["'])/g, '$1?v=bot-20261104$2');
   if (!html.includes('src="/site.js"')) {
     html = injectBodyEnd(html, '<script src="/site.js" defer></script>');
   }
