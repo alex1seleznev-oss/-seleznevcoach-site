@@ -116,3 +116,13 @@
  .native-home .running-story .story-stage{height:650px!important;position:relative!important}
  .native-home .scene-1,.native-home .scene-2{display:none}
 }
+.native-home .native-detail h1{font-size:clamp(40px,6.5vw,94px);font-weight:500;letter-spacing:-.065em;line-height:1.06;max-width:1100px;margin:45px 0 32px}
+.native-home .native-detail-lead{max-width:750px;font-size:22px;line-height:1.6}
+.native-home .native-detail-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:9%;margin-top:70px}
+.native-home .native-detail-grid h2{font-size:35px;letter-spacing:-.04em;margin:34px 0 22px}
+.native-home .native-detail-grid p{font-size:16px;line-height:1.75;max-width:62ch}
+.native-home .native-detail-grid aside{padding:35px;background:#fff;border:1px solid #d7dfe1;box-shadow:var(--native-shadow);align-self:start}
+.native-home .native-detail-grid aside>strong{font-size:56px;letter-spacing:-.055em;font-weight:450}
+.native-home .native-detail-grid aside .button{margin-top:25px;background:var(--signal);color:#fff;padding:18px 24px;gap:30px;display:flex;align-items:center;justify-content:space-between}
+.native-home .native-detail-boundary{border-top:1px solid #d7dfe1;padding-top:30px;margin-top:60px;font-size:14px}
+@media(max-width:640px){.native-home .native-detail-grid{grid-template-columns:1fr;gap:25px;margin-top:35px}.native-home .native-detail-grid aside{padding:26px}.native-home .native-detail-lead{font-size:18px}.native-home .native-detail-grid h2{font-size:29px}}

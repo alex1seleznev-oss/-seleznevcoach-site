@@ -51,6 +51,7 @@ export function GET(request: Request) {
   const paths = Object.entries(seoTargets)
     .filter(([, target]) => target.indexable !== false)
     .map(([pathname]) => pathname)
+    .concat(['/services/kids', '/services/sport-conditioning'])
     .sort((a, b) => a.localeCompare(b, 'en'));
 
   const body = paths.map((pathname) => {
@@ -62,7 +63,7 @@ export function GET(request: Request) {
       ? `\n    <xhtml:link rel="alternate" hreflang="ru" href="${esc(absolute(ru))}"/>\n    <xhtml:link rel="alternate" hreflang="en" href="${esc(absolute(en))}"/>\n    <xhtml:link rel="alternate" hreflang="x-default" href="${esc(absolute(ru))}"/>`
       : '';
 
-    return `  <url>\n    <loc>${esc(absolute(pathname))}</loc>\n    <lastmod>${LASTMOD}</lastmod>\n    <changefreq>${changefreq(pathname)}</changefreq>\n    <priority>${priority(pathname)}</priority>${alternates}\n  </url>`;
+    return `  <url>\n    <loc>${esc(absolute(pathname))}</loc>\n    <lastmod>${['/', '/services/kids', '/services/sport-conditioning'].includes(pathname) ? '2026-11-04' : LASTMOD}</lastmod>\n    <changefreq>${changefreq(pathname)}</changefreq>\n    <priority>${priority(pathname)}</priority>${alternates}\n  </url>`;
   }).join('\n');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${body}\n</urlset>\n`;
