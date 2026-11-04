@@ -23,3 +23,10 @@ GPT Image 2.5 was found in the Higgsfield catalog. The background generation req
 ## Deployment
 
 Target: existing Vercel project seleznevcoach-site, domain seleznevcoach.ru. This refresh is not a Sites/Timeweb migration.
+
+
+## Native ChatGPT panorama and training scene
+
+The panorama in public/images/generated/track-panorama.webp was generated with the native ChatGPT image tool on 2026-11-04. The tool does not expose a model selector; no specific GPT Image model version is asserted. It is an illustrative track, not an actual venue or documentary portrait. Original athlete photos and identity are unchanged. WebP is 207424 bytes.
+
+The homepage now progressively enhances a static three-step training section with a sticky panoramic scene on large screens. GSAP drives image framing and step transitions; standard document scrolling is preserved. Small screens, short viewports, and reduced-motion settings show all three steps in normal document flow. No new runtime dependency, backend or API key was added.

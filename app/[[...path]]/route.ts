@@ -214,8 +214,8 @@ export async function GET(request: Request, context: { params: Promise<{ path?: 
   }
 
   html = prepareSnapshot(html);
-  html = html.replace('</head>', '<link rel="preload" href="/fonts/onest-variable.ttf" as="font" type="font/ttf" crossorigin><link rel="stylesheet" href="/motion-refresh.css?v=20261104"></head>');
-  html = injectBodyEnd(html, '<script src="/vendor/gsap/gsap.min.js" defer></script><script src="/vendor/gsap/ScrollTrigger.min.js" defer></script><script src="/motion-refresh.js?v=20261104" defer></script>');
+  html = html.replace('</head>', '<link rel="preload" href="/fonts/onest-variable.ttf" as="font" type="font/ttf" crossorigin><link rel="stylesheet" href="/motion-refresh.css?v=scene-20261104"></head>');
+  html = injectBodyEnd(html, '<script src="/vendor/gsap/gsap.min.js" defer></script><script src="/vendor/gsap/ScrollTrigger.min.js" defer></script><script src="/motion-refresh.js?v=scene-20261104" defer></script>');
 
   if (customPage) {
     html = stripCustomHydration(html);

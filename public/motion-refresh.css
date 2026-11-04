@@ -137,3 +137,39 @@ body .hero.hero-blue{height:min(780px,calc(100dvh - 72px))!important;min-height:
 /* Primary copy and booking controls stay readable from the first paint. */
 body .hero.hero-blue .hero-intro,body .hero.hero-blue .hero-spec,body .hero.hero-blue .hero-topline{opacity:1!important;visibility:visible!important;transform:none!important}
 body .hero.hero-blue .hero-portrait-motion,body .hero.hero-blue .hero-depth{opacity:1!important;visibility:visible!important}
+
+/* A native-generated panorama becomes a three-part, scroll-led training story. */
+body .motion-scene{position:relative;background:#edf2f5;color:#17252d;isolation:isolate}
+body .motion-scene__stage{position:relative;overflow:hidden}
+body .motion-scene__image{position:relative;aspect-ratio:2.33;overflow:hidden}
+body .motion-scene__image img{display:block;width:100%;height:100%;object-fit:cover}
+body .motion-scene__heading{position:absolute;left:5%;top:48px;z-index:1}
+body .motion-scene__heading>p{font-size:11px;font-weight:650;letter-spacing:.16em;margin:0 0 24px}
+body .motion-scene__heading h2{font-family:Onest,sans-serif;font-size:clamp(40px,5.8vw,92px);line-height:1.02;letter-spacing:-.065em;font-weight:500;margin:0;color:#17252d}
+body .motion-scene__steps{padding:20px 5% 64px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px}
+body .motion-scene__step{display:flex;gap:22px;border-top:1px solid #a9b7bc;padding-top:24px;min-width:0}
+body .motion-scene__number{color:#b83228;font-size:16px;letter-spacing:-.04em}
+body .motion-scene__step h3{font-size:23px;font-weight:500;line-height:1.2;letter-spacing:-.035em;margin:0 0 16px;color:#17252d}
+body .motion-scene__step p{font-size:16px;line-height:1.65;color:#43555d;margin:0;max-width:35ch}
+body .motion-scene__rail{display:none}
+body .motion-scene.is-animated{height:230svh}
+body .motion-scene.is-animated .motion-scene__stage{position:sticky;top:72px;height:calc(100svh - 72px);min-height:528px}
+body .motion-scene.is-animated .motion-scene__image{position:absolute;inset:0;aspect-ratio:auto}
+body .motion-scene.is-animated .motion-scene__image:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#edf2f560,transparent 55%)}
+body .motion-scene.is-animated .motion-scene__heading{top:48px}
+body .motion-scene.is-animated .motion-scene__steps{position:absolute;right:5%;bottom:72px;width:min(410px,39%);padding:30px;background:#f7f9faed;display:grid;grid-template-columns:1fr;gap:0;backdrop-filter:blur(12px)}
+body .motion-scene.is-animated .motion-scene__step{grid-area:1/1;min-height:150px;border:0;padding:0;opacity:0}
+body .motion-scene.is-animated .motion-scene__step:first-child{opacity:1}
+body .motion-scene.is-animated .motion-scene__rail{display:flex;gap:10px;position:absolute;left:5%;bottom:44px;width:150px}
+body .motion-scene__rail span{height:3px;flex:1;background:#f7f9fa99;transition:background .3s}
+body .motion-scene__rail span.is-current{background:#b83228}
+@media(max-width:899px){
+ body .motion-scene__image{aspect-ratio:1.3}
+ body .motion-scene__image img{object-position:63% center}
+ body .motion-scene__heading{left:20px;top:28px}
+ body .motion-scene__heading>p{font-size:9px;margin-bottom:16px}
+ body .motion-scene__heading h2{font-size:clamp(36px,8vw,66px)}
+ body .motion-scene__steps{grid-template-columns:1fr;padding:12px 20px 48px;gap:28px}
+ body .motion-scene__step{padding-top:22px}
+ body .motion-scene__step h3{font-size:23px}
+}
