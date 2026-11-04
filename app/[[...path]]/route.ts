@@ -1,3 +1,4 @@
+import athleteFacts from '../../config/athlete-facts.json';
 import snapshot from '../../snapshot/pages.json';
 import { defaultOgImage, seoTargets } from '../../lib/seo-targets';
 import { seoPages } from '../../lib/seo-pages';
@@ -24,13 +25,14 @@ function injectBodyEnd(html: string, markup: string) {
 }
 
 function prepareSnapshot(html: string) {
+  html = html.replaceAll('15:27', athleteFacts.fiveKmPb);
   html = html.replace(/\/_next\/static\//g, '/legacy-next/static/');
   // Update HTML and captured React payload together to keep hydration consistent.
   html = html.replace(/https:\/\/t\.me\/seleznevcoach(?![A-Za-z0-9_])/g, 'https://t.me/seleznevcoach_bot?start=site')
     .replaceAll('Лично тренеру', 'Telegram-бот').replaceAll('Личный Telegram', 'Telegram-бот')
     .replaceAll('Message Alexander on Telegram', 'Open Telegram bot').replaceAll('Message Alexander', 'Open Telegram bot');
   // Captured filenames are fixed; invalidate old browser copies of patched scripts.
-  html = html.replace(/(src=["']\/legacy-next\/[^"']+\.js)(["'])/g, '$1?v=bot-20261104$2');
+  html = html.replace(/(src=["']\/legacy-next\/[^"']+\.js)(["'])/g, '$1?v=motion-20261104$2');
   if (!html.includes('src="/site.js"')) {
     html = injectBodyEnd(html, '<script src="/site.js" defer></script>');
   }
@@ -212,6 +214,8 @@ export async function GET(request: Request, context: { params: Promise<{ path?: 
   }
 
   html = prepareSnapshot(html);
+  html = html.replace('</head>', '<link rel="preload" href="/fonts/onest-variable.ttf" as="font" type="font/ttf" crossorigin><link rel="stylesheet" href="/motion-refresh.css?v=20261104"></head>');
+  html = injectBodyEnd(html, '<script src="/vendor/gsap/gsap.min.js" defer></script><script src="/vendor/gsap/ScrollTrigger.min.js" defer></script><script src="/motion-refresh.js?v=20261104" defer></script>');
 
   if (customPage) {
     html = stripCustomHydration(html);
