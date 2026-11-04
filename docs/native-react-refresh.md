@@ -13,3 +13,7 @@ The source component tree was recovered from the existing project checkout, then
 - A noindex ?preview=mobile view renders the same homepage in a 390px iframe for responsive visual verification; it is not linked in site navigation.
 
 Free LLM API was not found in the three accessible repositories, in the site dependency manifest or in local source matches. No unrelated component was deleted.
+
+## Verification
+
+Production build and TypeScript passed. Vercel clean install uses a registry-only lockfile (no local links). Live mobile rendering at 375px content width was checked: menu open/close, method/services/home navigation, stage selection, selected-service preservation and bot deep link. No missing same-document anchor targets or horizontal overflow were found. A scroll from 8018 to 8679 changed the third photographic scene from translateY(102%) to translateY(0), confirming actual scroll-driven transitions. The mobile CTA bottom is 820px inside an 844px viewport. Child/sport service detail pages were opened successfully with correct headings and bot destinations.

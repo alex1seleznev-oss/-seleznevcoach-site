@@ -134,3 +134,7 @@
  .native-home .hero.hero-blue .hero-subline{max-width:100%!important;width:100%;font-size:12px;line-height:1.6;margin-bottom:22px}
  .native-home .hero.hero-blue .hero-intro{bottom:24px!important}
 }
+/* Keep the inherited blue theme out of the native editorial palette. */
+.native-home .section h2>span:not(.signal){color:var(--motion-muted)!important}
+.native-home .method-steps [role=tab] span{color:inherit!important}
+.native-home .method-steps [role=tab][aria-selected=true] .step-number{color:var(--signal)!important}
