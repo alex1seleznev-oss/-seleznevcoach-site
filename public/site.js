@@ -140,7 +140,11 @@
     if (url.origin !== window.location.origin) return;
 
     const sameDocument = url.pathname === window.location.pathname && url.search === window.location.search;
-    if (sameDocument && url.hash) return;
+    if (sameDocument && url.hash) {
+      const menu = document.getElementById('standalone-mobile-menu');
+      if (menu && menu.contains(link)) menu.remove();
+      return;
+    }
 
     event.preventDefault();
     event.stopImmediatePropagation();
