@@ -25,14 +25,18 @@ function injectBodyEnd(html: string, markup: string) {
 }
 
 function prepareSnapshot(html: string) {
-  html = html.replaceAll('15:27', athleteFacts.fiveKmPb);
+  html = html.replaceAll('15:27', athleteFacts.fiveKmPb)
+    .replaceAll('/media/mountain-river.jpeg', '/images/generated/premium-athlete-portrait.webp')
+    .replaceAll('Александр Селезнёв у горной реки', 'Александр Селезнёв. Редакционный портрет на основе фотографии.')
+    .replaceAll('Alexander Seleznev by a mountain river', 'Alexander Seleznev. Editorial portrait based on a photograph.')
+    .replaceAll('ЗА ПРЕДЕЛАМИ СТАДИОНА', 'АЛЕКСАНДР СЕЛЕЗНЁВ');
   html = html.replace(/\/_next\/static\//g, '/legacy-next/static/');
   // Update HTML and captured React payload together to keep hydration consistent.
   html = html.replace(/https:\/\/t\.me\/seleznevcoach(?![A-Za-z0-9_])/g, 'https://t.me/seleznevcoach_bot?start=site')
     .replaceAll('Лично тренеру', 'Telegram-бот').replaceAll('Личный Telegram', 'Telegram-бот')
     .replaceAll('Message Alexander on Telegram', 'Open Telegram bot').replaceAll('Message Alexander', 'Open Telegram bot');
   // Captured filenames are fixed; invalidate old browser copies of patched scripts.
-  html = html.replace(/(src=["']\/legacy-next\/[^"']+\.js)(["'])/g, '$1?v=motion-20261104$2');
+  html = html.replace(/(src=["']\/legacy-next\/[^"']+\.js)(["'])/g, '$1?v=premium-20261104$2');
   if (!html.includes('src="/site.js"')) {
     html = injectBodyEnd(html, '<script src="/site.js" defer></script>');
   }
@@ -214,8 +218,9 @@ export async function GET(request: Request, context: { params: Promise<{ path?: 
   }
 
   html = prepareSnapshot(html);
-  html = html.replace('</head>', '<link rel="preload" href="/fonts/onest-variable.ttf" as="font" type="font/ttf" crossorigin><link rel="stylesheet" href="/motion-refresh.css?v=scene-20261104"></head>');
-  html = injectBodyEnd(html, '<script src="/vendor/gsap/gsap.min.js" defer></script><script src="/vendor/gsap/ScrollTrigger.min.js" defer></script><script src="/motion-refresh.js?v=scene-20261104" defer></script>');
+  if (pathname === '/' || pathname === '/en') html = injectHead(html, '<link rel="preload" as="image" href="/images/generated/premium-stadium-hero.webp" fetchpriority="high">');
+  html = html.replace('</head>', '<link rel="preload" href="/fonts/onest-variable.ttf" as="font" type="font/ttf" crossorigin><link rel="stylesheet" href="/motion-refresh.css?v=scene-20261104"><link rel="stylesheet" href="/premium-sports.css?v=premium-20261104"></head>');
+  html = injectBodyEnd(html, '<script src="/vendor/gsap/gsap.min.js" defer></script><script src="/vendor/gsap/ScrollTrigger.min.js" defer></script><script src="/premium-sports.js?v=premium-20261104" defer></script>');
 
   if (customPage) {
     html = stripCustomHydration(html);

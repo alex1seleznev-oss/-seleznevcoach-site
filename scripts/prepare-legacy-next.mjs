@@ -10,8 +10,8 @@ async function exists(p) {
   try { await fs.access(p); return true; } catch { return false; }
 }
 
-await fs.rm(legacy, { recursive: true, force: true });
 if (await exists(source)) {
+  await fs.rm(legacy, { recursive: true, force: true });
   await fs.rename(source, legacy);
   console.log('Moved captured /_next assets to /legacy-next for standalone serving.');
 } else {
@@ -43,6 +43,10 @@ async function relocateRuntime(directory) {
     else if (item.name.endsWith('.js')) {
       const source = await fs.readFile(file, 'utf8');
       const relocated = source.replaceAll('15:27', athleteFacts.fiveKmPb).replaceAll('/_next/', '/legacy-next/')
+        .replaceAll('/media/mountain-river.jpeg', '/images/generated/premium-athlete-portrait.webp')
+        .replaceAll('Александр Селезнёв у горной реки', 'Александр Селезнёв. Редакционный портрет на основе фотографии.')
+        .replaceAll('Alexander Seleznev by a mountain river', 'Alexander Seleznev. Editorial portrait based on a photograph.')
+        .replaceAll('ЗА ПРЕДЕЛАМИ СТАДИОНА', 'АЛЕКСАНДР СЕЛЕЗНЁВ')
         .replace(/https:\/\/t\.me\/seleznevcoach(?![A-Za-z0-9_])/g, 'https://t.me/seleznevcoach_bot?start=site')
         .replaceAll('Лично тренеру', 'Telegram-бот').replaceAll('Личный Telegram', 'Telegram-бот')
         .replaceAll('Message Alexander on Telegram', 'Open Telegram bot').replaceAll('Message Alexander', 'Open Telegram bot');
