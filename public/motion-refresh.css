@@ -134,3 +134,6 @@ body .hero.hero-blue .hero-intro:before,body .hero.hero-blue .hero-intro:after{d
 body .hero.hero-blue{height:min(780px,calc(100dvh - 72px))!important;min-height:650px!important}
 @media(max-width:800px){body .hero.hero-blue{height:760px!important;min-height:0!important}}
 @media(max-width:540px){body .hero.hero-blue{height:705px!important;min-height:0!important}body .hero.hero-blue .hero-intro{width:calc(100% - 40px)!important;left:20px!important;bottom:35px!important}}
+/* Primary copy and booking controls stay readable from the first paint. */
+body .hero.hero-blue .hero-intro,body .hero.hero-blue .hero-spec,body .hero.hero-blue .hero-topline{opacity:1!important;visibility:visible!important;transform:none!important}
+body .hero.hero-blue .hero-portrait-motion,body .hero.hero-blue .hero-depth{opacity:1!important;visibility:visible!important}
