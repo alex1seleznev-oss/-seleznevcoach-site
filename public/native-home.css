@@ -126,3 +126,11 @@
 .native-home .native-detail-grid aside .button{margin-top:25px;background:var(--signal);color:#fff;padding:18px 24px;gap:30px;display:flex;align-items:center;justify-content:space-between}
 .native-home .native-detail-boundary{border-top:1px solid #d7dfe1;padding-top:30px;margin-top:60px;font-size:14px}
 @media(max-width:640px){.native-home .native-detail-grid{grid-template-columns:1fr;gap:25px;margin-top:35px}.native-home .native-detail-grid aside{padding:26px}.native-home .native-detail-lead{font-size:18px}.native-home .native-detail-grid h2{font-size:29px}}
+/* Phone composition: keep all copy on a solid surface, outside the portrait. */
+@media(max-width:540px){
+ .native-home .hero.hero-blue .hero-photo.hero-cutout{inset:210px 0 auto!important;height:calc(100% - 420px)!important}
+ .native-home .hero-image-light{background:linear-gradient(0deg,#dce0df,transparent 20%,transparent 95%,#dce0df)}
+ .native-home .hero.hero-blue .hero-statement{max-width:100%!important;width:100%;font-size:22px;line-height:1.22;margin-bottom:14px}
+ .native-home .hero.hero-blue .hero-subline{max-width:100%!important;width:100%;font-size:12px;line-height:1.6;margin-bottom:22px}
+ .native-home .hero.hero-blue .hero-intro{bottom:24px!important}
+}
