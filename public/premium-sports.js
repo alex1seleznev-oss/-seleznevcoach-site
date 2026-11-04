@@ -12,10 +12,8 @@
     const media = gsap.matchMedia();
     media.add('(prefers-reduced-motion: no-preference)', () => {
       const context = gsap.context(() => {
-        // Introduce the name before the invitation to start training.
-        gsap.fromTo(hero.querySelectorAll('.hero-name h1 em'), { yPercent: 105 }, { yPercent: 0, duration: 1.15, stagger: .09, ease: 'power3.out', clearProps: 'transform' });
         const image = hero.querySelector('.hero-photo');
-        if (image && innerWidth > 800) gsap.fromTo(image, { scale: 1.035 }, { scale: 1, duration: 1.6, ease: 'power2.out', clearProps: 'transform' });
+        if (image && innerWidth > 800) gsap.fromTo(image, { clipPath: 'inset(0 0 0 5%)' }, { clipPath: 'inset(0 0 0 0%)', duration: 1.25, ease: 'power2.out', clearProps: 'clipPath' });
         // Large photographic crops open as their stories enter the viewport.
         document.querySelectorAll('.coach-image img, .training-photo-story img, .journal-image img').forEach(image => {
           gsap.fromTo(image, { clipPath: 'inset(12% 0 0 0)' }, {

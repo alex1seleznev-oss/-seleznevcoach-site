@@ -12,7 +12,7 @@ Native ChatGPT image generation/editing was used. The tool does not expose a mod
 ## Implementation
 
 - Full-bleed campaign hero, typography, photographic coach section, open two-column service layout, calmer tabs, journal and contact sections.
-- GSAP introduces the name and opens photographs as they enter view. Reduced-motion preference disables the enhancements. No scroll hijacking.
+- The name stays visible from first paint. GSAP opens the hero image and photographs as they enter view. Captured name transforms are disabled to avoid competing intro timelines. Reduced-motion preference disables the enhancements. No scroll hijacking.
 - Replaces the previous duplicated three-step panorama enhancement; the original method tabs and real running story remain.
 - All URLs, navigation anchors, prices, legal copy, consent controls and server API authorization remain intact.
 - PB remains 15:24; website Telegram links continue to point to seleznevcoach_bot.

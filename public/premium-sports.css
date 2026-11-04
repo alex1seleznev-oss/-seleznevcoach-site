@@ -261,3 +261,5 @@ body .service-select:hover svg{transform:translate(3px,-3px)}
 body .scene-shade{background:linear-gradient(90deg,#172020c4,#17202050 45%,#1720200a 85%),linear-gradient(0deg,#17202080,transparent 65%)!important}
 body .story-video{border-radius:0!important;border-color:#ffffff66!important}
 @media(max-width:540px){body .working-together{margin-top:38px;margin-bottom:38px}body .working-together h3{font-size:27px}body .services>.section-heading>p{font-size:14px}}
+/* Keep the name readable even if the captured intro timeline is interrupted. */
+body .hero.hero-blue .hero-name h1 em{transform:none!important;opacity:1!important;visibility:visible!important}
