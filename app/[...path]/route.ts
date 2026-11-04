@@ -37,8 +37,8 @@ function prepareSnapshot(html: string) {
     .replaceAll('Message Alexander on Telegram', 'Open Telegram bot').replaceAll('Message Alexander', 'Open Telegram bot');
   // Captured filenames are fixed; invalidate old browser copies of patched scripts.
   html = html.replace(/(src=["']\/legacy-next\/[^"']+\.js)(["'])/g, '$1?v=premium-20261104$2');
-  if (!html.includes('src="/site.js"')) {
-    html = injectBodyEnd(html, '<script src="/site.js" defer></script>');
+  if (!html.includes('src="/site.js?v=native-1"')) {
+    html = injectBodyEnd(html, '<script src="/site.js?v=native-1" defer></script>');
   }
   return html;
 }

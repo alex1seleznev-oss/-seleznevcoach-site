@@ -141,8 +141,23 @@
 
     const sameDocument = url.pathname === window.location.pathname && url.search === window.location.search;
     if (sameDocument && url.hash) {
-      const menu = document.getElementById('standalone-mobile-menu');
-      if (menu && menu.contains(link)) menu.remove();
+      let id;
+      try { id = decodeURIComponent(url.hash.slice(1)); } catch { return; }
+      const target = document.getElementById(id);
+      if (!target) return;
+      event.preventDefault();
+      if (!document.body.classList.contains('native-home')) event.stopImmediatePropagation();
+      const fallback = document.getElementById('standalone-mobile-menu');
+      if (fallback) fallback.remove();
+      const nativeMenu = link.closest('dialog');
+      if (nativeMenu instanceof HTMLDialogElement && nativeMenu.open) nativeMenu.close();
+      const capturedMenu = link.closest('[role="dialog"]');
+      const close = capturedMenu?.querySelector('.close-menu, [aria-label="Закрыть меню"], [aria-label="Close menu"]');
+      if (close instanceof HTMLElement) close.click();
+      history.pushState(null, '', url.pathname + url.search + url.hash);
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        target.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
+      }));
       return;
     }
 
@@ -161,7 +176,7 @@
     overlay.setAttribute('role', 'dialog');
     overlay.setAttribute('aria-modal', 'true');
     overlay.setAttribute('aria-label', 'Навигация');
-    overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#0b0b0b;color:#fff;padding:24px;display:flex;flex-direction:column;gap:28px;overflow:auto';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#f6f7f8;color:#172020;padding:24px;display:flex;flex-direction:column;gap:28px;overflow:auto';
 
     const close = document.createElement('button');
     close.type = 'button';

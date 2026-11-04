@@ -1,0 +1,118 @@
+/* Native React homepage. Light performance editorial, independently animated layers. */
+.native-home{--native-shadow:0 26px 65px #1d303414}
+.native-home .site-header{position:sticky;top:0;z-index:60;height:76px;background:#f6f7f8f5!important;backdrop-filter:blur(16px)}
+.native-home main{overflow:clip}
+.native-home .hero.hero-blue .hero-photo.hero-cutout{background:none!important;will-change:auto}
+.native-home .hero-media-depth{position:absolute;inset:0 -2% 0 -2%;height:100%;width:104%;transform-origin:65% 20%;will-change:transform}
+.native-home .hero-media-depth img{width:100%;height:100%;object-fit:cover;object-position:65% center;transform-origin:65% 20%}
+.native-home .hero-image-light{position:absolute;inset:0;background:linear-gradient(90deg,#f1f3f2e6,#edf0edab 34%,transparent 65%);pointer-events:none}
+.native-home .hero.hero-blue .hero-name{opacity:1;visibility:visible}
+.native-home .hero.hero-blue .hero-name h1 .name-reveal{display:inline-block;font-style:normal;will-change:transform}
+.native-home .hero.hero-blue .hero-intro .button{box-shadow:0 8px 25px #90251e25}
+.native-home .hero .button:hover{box-shadow:0 13px 35px #90251e38}
+.native-home .records-strip{position:relative;z-index:1;background:#fff!important;box-shadow:0 -18px 60px #263b4210}
+.native-home .records-intro p{font-size:21px;line-height:1.3;letter-spacing:-.025em}
+.native-home .reading-progress{position:fixed;inset:0 0 auto;height:3px;background:var(--signal);z-index:100;transform:scaleX(0);transform-origin:left;pointer-events:none}
+.native-home .coach .coach-image{overflow:visible!important;isolation:isolate}
+.native-home .coach-image:before{content:'';position:absolute;inset:20px -20px -20px 20px;background:#e4e9eb;border:1px solid #cbd4d7;z-index:-1;transform:rotate(-2deg);box-shadow:var(--native-shadow)}
+.native-home .coach-image img{display:block;clip-path:inset(0);overflow:hidden;box-shadow:0 18px 45px #18384012}
+.native-home .coach .coach-heading{padding-bottom:28px}
+.native-home .photo-gallery .photo-open{overflow:hidden;transition:box-shadow .4s,transform .4s}
+.native-home .photo-gallery .photo-open:hover{box-shadow:var(--native-shadow);transform:translateY(-5px)}
+.native-home .fit-panel{position:relative}
+.native-home .fit-panel[data-state=active],.native-home .method-detail[data-state=active]{animation:panel-arrive .55s cubic-bezier(.2,.7,.3,1)}
+@keyframes panel-arrive{from{opacity:.2;translate:0 20px}to{opacity:1;translate:0 0}}
+.native-home .method-diagram{isolation:isolate;border:0!important;perspective:900px;transform-style:preserve-3d;min-width:240px;min-height:240px}
+.native-home .orbit{border:1px solid #a5b4ba!important;box-shadow:0 5px 0 #d0dadd,0 15px 24px #253a4b0d;background:linear-gradient(135deg,#ffffff80,transparent);transform:rotateX(45deg) rotateZ(-22deg)}
+.native-home .orbit-1{inset:0}
+.native-home .orbit-2{inset:28px;transform:translateZ(18px) rotateX(45deg) rotateZ(-22deg)}
+.native-home .orbit-3{inset:56px;transform:translateZ(36px) rotateX(45deg) rotateZ(-22deg)}
+.native-home .orbit-center{font-size:82px!important;transform:translateZ(60px);text-shadow:0 7px 16px #782b2320}
+.native-home .method-explanation{padding-left:15px}
+.native-home .training-photo-story figure{overflow:hidden;box-shadow:0 22px 55px #2a3c471a}
+.native-home .running-story.story-animated{height:330svh;position:relative}
+.native-home .running-story.story-animated .story-stage{position:sticky!important;top:76px;height:calc(100svh - 76px)!important;min-height:0}
+.native-home .story-scenes{position:absolute;inset:0}
+.native-home .running-scene{position:absolute;inset:0;overflow:hidden}
+.native-home .scene-image{position:absolute;inset:-2% 0}
+.native-home .scene-image img{width:100%;height:100%;object-fit:cover}
+.native-home .scene-content{z-index:2}
+.native-home .scene-word{font-size:clamp(100px,20vw,300px)!important;line-height:1!important;letter-spacing:-.075em!important}
+.native-home .scene-content p{font-size:clamp(17px,1.8vw,25px);max-width:32ch}
+.native-home .story-top{z-index:10}
+.native-home .story-top>a{color:white}
+.native-home .story-video{z-index:11;box-shadow:0 15px 40px #17202038}
+.native-home .story-bottom{display:flex!important;z-index:10}
+.native-home .story-bottom>.mono{display:none}
+.native-home .story-progress{margin-left:auto;display:flex;gap:8px;width:170px}
+.native-home .story-progress>span{height:3px;flex:1;background:#ffffff55;overflow:hidden}
+.native-home .story-progress-fill{height:100%;display:block;background:white;transform:scaleX(0);transform-origin:left}
+.native-home .service-grid{gap:24px!important;perspective:1400px}
+.native-home .section .service-card,.native-home .section .service-card:nth-child(2n){padding:34px!important;border:1px solid #d7dfe1!important;background:linear-gradient(145deg,#fff,#f2f5f6)!important;box-shadow:0 4px 0 #e8edef,0 18px 40px #18303e08!important;transition:box-shadow .4s,border-color .4s;transform-style:preserve-3d}
+.native-home .section .service-card:hover{border-color:#a6b6bb!important;box-shadow:0 6px 0 #dfe6e9,0 27px 65px #18303e13!important}
+.native-home .service-card .service-top{font-size:10px;margin-bottom:24px}
+.native-home .service-card h3{font-size:clamp(28px,2.8vw,42px)}
+.native-home .service-card .service-problem{min-height:0}
+.native-home .service-card .service-process{min-height:0}
+.native-home .service-card .service-result p{min-height:0}
+.native-home .service-card .service-pricing{margin-top:auto;padding-top:28px}
+.native-home .service-card .service-pricing strong{font-size:42px}
+.native-home .service-card .service-pricing strong span{font-size:25px}
+.native-home .service-card .service-pricing>span{font-size:12px!important;line-height:1.5}
+.native-home .service-note{font-size:12px!important;line-height:1.7}
+.native-home .service-details{margin-top:16px;font-size:13px;color:#526063!important}
+.native-home .lab-console{box-shadow:0 18px 60px #18303e0c}
+.native-home .journal-image{box-shadow:0 8px 22px #18303e12}
+.native-home .direct-contact .chosen-format{padding:14px 18px;background:#e9eef0;border-left:2px solid var(--signal);font-size:14px}
+.native-home .native-menu{margin:0;padding:28px max(24px,5vw);max-width:none;width:100%;height:100svh;max-height:100svh;background:#f6f7f8;color:#172020;border:0;overflow:auto}
+.native-home .native-menu::backdrop{background:#17202066;backdrop-filter:blur(7px)}
+.native-home .native-menu-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:35px;border-bottom:1px solid #d5dee1}
+.native-home .native-menu-top h2{font-size:18px;font-weight:500}
+.native-home .native-menu-top button{border:1px solid #b7c5ca;background:transparent;width:48px;height:48px;display:grid;place-items:center}
+.native-home .native-menu nav{padding:32px 0;display:grid;gap:0}
+.native-home .native-menu nav a{display:grid;grid-template-columns:30px 1fr 24px;align-items:center;gap:20px;padding:16px 0;font-size:clamp(28px,6vw,55px);letter-spacing:-.045em;text-decoration:none;color:#172020}
+.native-home .native-menu nav a>span{font-size:12px;letter-spacing:0;color:#65747a}
+.native-home .native-menu nav a>svg{width:24px}
+.native-home .native-menu-journal{display:inline-flex;align-items:center;gap:24px;color:#172020;border-top:1px solid #d5dee1;padding-top:24px}
+.native-home .native-menu[open]{animation:menu-arrive .35s cubic-bezier(.2,.7,.3,1)}
+@keyframes menu-arrive{from{opacity:.6;translate:0 -16px}to{opacity:1;translate:0 0}}
+@media(min-width:1001px){.native-home .mobile-menu{display:none}}
+@media(max-width:1000px){.native-home .desktop-nav{display:none!important}.native-home .mobile-menu{display:grid!important;place-items:center;width:42px;height:42px;background:transparent;border:0;color:#172020}.native-home .header-cta{margin-left:auto}}
+@media(max-width:800px){
+ .native-home .site-header{height:64px}
+ .native-home .hero.hero-blue .hero-name{opacity:1!important}
+ .native-home .hero-media-depth{width:100%;inset:0}
+ .native-home .hero-media-depth img{object-position:73% center}
+ .native-home .hero-image-light{background:linear-gradient(180deg,#edf0ed 0%,#edf0edeb 27%,transparent 45%)}
+ .native-home .method-diagram{min-width:180px;min-height:180px}
+ .native-home .method-explanation{padding-left:0}
+ .native-home .running-story.story-animated{height:270svh}
+ .native-home .running-story.story-animated .story-stage{top:64px;height:calc(100svh - 64px)!important}
+ .native-home .service-grid{gap:20px!important}
+ .native-home .section .service-card,.native-home .section .service-card:nth-child(2n){padding:27px!important}
+}
+@media(max-width:540px){
+ .native-home .site-header{height:62px}
+ .native-home .hero-media-depth img{object-position:77% center;object-fit:cover}
+ .native-home .hero-image-light{background:linear-gradient(90deg,#edf0ede6, #edf0ed80 25%,transparent 62%)}
+ .native-home .hero.hero-blue .hero-name h1>span{padding-bottom:.06em}
+ .native-home .coach-image:before{inset:15px -14px -15px 14px}
+ .native-home .method-detail{display:grid!important;grid-template-columns:1fr!important;gap:22px}
+ .native-home .method-diagram{width:220px;height:220px;min-width:220px;min-height:220px;margin:0 auto}
+ .native-home .method-explanation{max-width:100%}
+ .native-home .method-explanation h3{font-size:32px}
+ .native-home .section .service-card,.native-home .section .service-card:nth-child(2n){padding:26px 23px!important}
+ .native-home .service-card h3{font-size:30px}
+ .native-home .running-story.story-animated .story-stage{top:62px;height:calc(100svh - 62px)!important}
+ .native-home .scene-word{font-size:26vw!important}
+ .native-home .scene-content p{font-size:17px;max-width:24ch}
+ .native-home .story-video{width:115px!important;height:175px!important}
+ .native-home .photo-gallery .photo-open:hover{transform:none}
+}
+@media(prefers-reduced-motion:reduce){
+ .native-home .name-reveal,.native-home .hero-media-depth,.native-home .hero-media-depth img,.native-home .service-card,.native-home .journal-card,.native-home .coach-copy,.native-home h2{transform:none!important;opacity:1!important;will-change:auto!important}
+ .native-home .reading-progress{display:none}
+ .native-home .running-story{height:auto!important}
+ .native-home .running-story .story-stage{height:650px!important;position:relative!important}
+ .native-home .scene-1,.native-home .scene-2{display:none}
+}
