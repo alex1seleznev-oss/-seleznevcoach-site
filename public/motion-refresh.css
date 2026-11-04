@@ -128,3 +128,9 @@ body .nav-sheet a,body .nav-sheet button,body .nav-sheet p{color:var(--motion-in
 body .price-panel,body .reading-callout,body .related-formats{background:#edf1f4;color:var(--motion-ink);border-color:var(--motion-line)}
 body .price-panel strong,body .reading-callout h2,body .reading-callout h3{color:var(--motion-ink)}
 body .detail-page .deliverables,body .detail-page .detail-boundary{border-color:var(--motion-line)}
+/* Override legacy mobile gradients and fixed heights explicitly. */
+body .hero.hero-blue .hero-intro{background:transparent!important;padding:0!important;right:auto!important}
+body .hero.hero-blue .hero-intro:before,body .hero.hero-blue .hero-intro:after{display:none!important;content:none!important}
+body .hero.hero-blue{height:min(780px,calc(100dvh - 72px))!important;min-height:650px!important}
+@media(max-width:800px){body .hero.hero-blue{height:760px!important;min-height:0!important}}
+@media(max-width:540px){body .hero.hero-blue{height:705px!important;min-height:0!important}body .hero.hero-blue .hero-intro{width:calc(100% - 40px)!important;left:20px!important;bottom:35px!important}}
