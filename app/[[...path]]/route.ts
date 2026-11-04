@@ -25,6 +25,12 @@ function injectBodyEnd(html: string, markup: string) {
 
 function prepareSnapshot(html: string) {
   html = html.replace(/\/_next\/static\//g, '/legacy-next/static/');
+  // Keep the public personal profile in structured data; route contact links to the bot.
+  html = html.replace(/<a\b[^>]*href=["']https:\/\/t\.me\/seleznevcoach["'][^>]*>[\s\S]*?<\/a>/gi, (anchor) =>
+    anchor.replace('https://t.me/seleznevcoach', 'https://t.me/seleznevcoach_bot?start=site')
+      .replace('Лично тренеру', 'Telegram-бот').replace('Личный Telegram', 'Telegram-бот')
+      .replace('Message Alexander on Telegram', 'Open Telegram bot').replace('Message Alexander', 'Open Telegram bot')
+  );
   if (!html.includes('src="/site.js"')) {
     html = injectBodyEnd(html, '<script src="/site.js" defer></script>');
   }
