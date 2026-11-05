@@ -12,5 +12,5 @@ export default async function Page({searchParams}:Props){
  // A faithful small-screen rendering for visual QA, never linked in the product UI.
  if((await searchParams).preview==='mobile')return <main style={{display:'grid',placeItems:'center',minHeight:'100svh',background:'#dde1e3'}}><iframe src="/" title="Мобильная версия сайта" style={{width:390,maxWidth:'100%',height:844,border:0,background:'#f6f7f8'}}/></main>;
  const person={'@context':'https://schema.org','@type':'Person','@id':'https://seleznevcoach.ru/#alexander',name:'Александр Селезнёв',url:'https://seleznevcoach.ru',jobTitle:'Тренер по бегу и общей физической подготовке',sameAs:['https://t.me/runadapt','https://www.instagram.com/seleznevcoach/']};
- return <><link rel="preload" as="image" href="/images/generated/premium-stadium-hero.webp" fetchPriority="high"/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(person).replace(/</g,'\\u003c')}}/><Home/></>;
+ return <><link rel="preload" as="image" href="/images/generated/immersive-arena.webp" fetchPriority="high"/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(person).replace(/</g,'\\u003c')}}/><Home/></>;
 }
