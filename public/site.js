@@ -4,6 +4,23 @@
   const CONSENT_KEY = 'seleznevcoach_analytics_consent';
   const isProduction = ['seleznevcoach.ru', 'www.seleznevcoach.ru'].includes(window.location.hostname);
 
+  // Touch has no persistent hover. Highlight the tapped card without
+  // intercepting its links or triggering anything while the user scrolls.
+  let spotlitCard;
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) return;
+    const card = event.target.closest('.service-grid .service-card');
+    if (spotlitCard && spotlitCard !== card) {
+      spotlitCard.classList.remove('is-spotlit');
+      spotlitCard = undefined;
+    }
+    if (card && (event.pointerType === 'touch' || event.pointerType === 'pen' ||
+        matchMedia('(hover: none)').matches)) {
+      card.classList.add('is-spotlit');
+      spotlitCard = card;
+    }
+  }, { passive: true });
+
   function analyticsAllowed() {
     try { return localStorage.getItem(CONSENT_KEY) === 'granted'; } catch { return false; }
   }

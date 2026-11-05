@@ -1,0 +1,234 @@
+/* The editorial imagery belongs to the service, in either language. */
+:root {
+  --art-diagnostics: url("/images/services/diagnostics.webp");
+  --art-plan: url("/images/services/plan.webp");
+  --art-personal: url("/images/services/personal.webp");
+  --art-performance: url("/images/services/performance.webp");
+  --finish-line: #d4dce0;
+  --finish-shadow: 0 16px 38px rgb(28 48 61 / .08);
+  --service-ease: cubic-bezier(.22, .72, .2, 1);
+}
+
+body .section .service-grid { gap: 24px !important; }
+body .section .service-grid .service-card:nth-child(n) {
+  --card-inset: clamp(22px, 2.4vw, 34px);
+  position: relative;
+  min-width: 0;
+  isolation: isolate;
+  padding: var(--card-inset) !important;
+  border: 1px solid var(--finish-line) !important;
+  border-radius: 0 !important;
+  background: linear-gradient(145deg, #fff, #f2f5f6) !important;
+  box-shadow: var(--finish-shadow) !important;
+  transition: translate .35s var(--service-ease), scale .35s var(--service-ease),
+    border-color .35s, box-shadow .4s;
+}
+
+.service-cover,
+body:not(.native-home) .service-grid .service-card::before {
+  display: block;
+  flex: 0 0 auto;
+  aspect-ratio: 16 / 9;
+  margin-bottom: clamp(20px, 2.4vw, 32px);
+  background-color: #e1e6e8;
+  overflow: hidden;
+}
+
+.service-cover img,
+.service-detail-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.service-cover img {
+  transition: transform .65s var(--service-ease);
+}
+.service-cover:focus-visible {
+  outline: 2px solid #a92f28;
+  outline-offset: 4px;
+}
+
+/* The captured English page retains its existing markup and navigation. */
+.native-home .service-grid .service-card::before { display: none; }
+body:not(.native-home) .service-grid .service-card:has(a[href$="/services/diagnostics"]) { --card-art: var(--art-diagnostics); }
+body:not(.native-home) .service-grid .service-card:has(a[href$="/services/plan"]) { --card-art: var(--art-plan); }
+body:not(.native-home) .service-grid .service-card:has(a[href$="/services/personal"]) { --card-art: var(--art-personal); }
+body:not(.native-home) .service-grid .service-card:has(a[href$="/services/performance"]) { --card-art: var(--art-performance); }
+body:not(.native-home) .service-grid .service-card:has(a[href*="/services/"])::before {
+  content: "";
+  position: static;
+  width: 100%;
+  height: auto;
+  transform: none;
+  transform-origin: center;
+  background-image: var(--card-art);
+  background-size: cover;
+  background-position: center;
+  transition: scale .65s var(--service-ease);
+}
+
+@property --service-orbit {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes service-orbit {
+  to { --service-orbit: 360deg; }
+}
+body .service-grid .service-card::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: -1px;
+  border: 1px solid #ee9ac2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s;
+}
+@supports (mask-composite: exclude) {
+  body .service-grid .service-card::after {
+    border: 0;
+    padding: 2px;
+    background: conic-gradient(from var(--service-orbit), #f2a8bc, #b8a0f9 22%,
+      #73e4ed 37%, #f1c1fa 57%, #fa736a 74%, #f2a8bc);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+  }
+}
+
+body .section .service-grid .service-card:is(:focus-within, :active, .is-spotlit) {
+  translate: 0 -4px;
+  scale: 1.009;
+  border-color: #d9accf !important;
+  box-shadow: 0 0 24px #cc91d841, 0 0 11px #76dcea58, 0 16px 38px #2134471a !important;
+}
+body .service-grid .service-card:is(:focus-within, :active, .is-spotlit)::after {
+  opacity: 1;
+  animation: service-orbit 1.8s ease-out both;
+}
+.service-card:is(:focus-within, :active, .is-spotlit) .service-cover img { transform: scale(1.065); }
+body:not(.native-home) .service-grid .service-card:is(:focus-within, :active, .is-spotlit)::before { scale: 1.035; }
+
+@media (hover: hover) and (pointer: fine) {
+  body .section .service-grid .service-card:hover {
+    translate: 0 -5px;
+    scale: 1.012;
+    border-color: #d9accf !important;
+    box-shadow: 0 0 26px #cc91d841, 0 0 12px #76dcea58, 0 18px 40px #2134471a !important;
+  }
+  body .service-grid .service-card:hover::after {
+    opacity: 1;
+    animation: service-orbit 1.8s ease-out both;
+  }
+  .service-card:hover .service-cover img { transform: scale(1.065); }
+  body:not(.native-home) .service-grid .service-card:hover::before { scale: 1.035; }
+}
+
+/* Covers on detail pages, alongside the service title on wider screens. */
+html:has(link[rel="canonical"][href$="/services/diagnostics"]) { --detail-art: var(--art-diagnostics); }
+html:has(link[rel="canonical"][href$="/services/plan"]) { --detail-art: var(--art-plan); }
+html:has(link[rel="canonical"][href$="/services/personal"]) { --detail-art: var(--art-personal); }
+html:has(link[rel="canonical"][href$="/services/performance"]) { --detail-art: var(--art-performance); }
+
+html:has(link[rel="canonical"][href*="/services/"]) body:not(.native-home) .detail-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.06fr) minmax(0, 1fr);
+  column-gap: clamp(24px, 5vw, 84px);
+  align-content: center;
+}
+html:has(link[rel="canonical"][href*="/services/"]) body:not(.native-home) .detail-hero > * { grid-column: 1; }
+html:has(link[rel="canonical"][href*="/services/"]) body:not(.native-home) .detail-hero::after {
+  content: "";
+  display: block;
+  grid-column: 2;
+  grid-row: 1 / span 4;
+  align-self: center;
+  aspect-ratio: 3 / 2;
+  background: #e1e6e8 var(--detail-art) center / cover no-repeat;
+  box-shadow: var(--finish-shadow);
+}
+html:has(link[rel="canonical"][href*="/services/"]) body:not(.native-home) .detail-hero h1,
+.native-home .native-detail .service-detail-lead h1 {
+  font-size: clamp(34px, 4.25vw, 66px);
+  line-height: 1.06;
+  margin: 18px 0 20px;
+  text-wrap: balance;
+}
+
+.service-detail-lead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(26px, 5vw, 80px);
+  align-items: center;
+  margin-top: clamp(25px, 5vw, 68px);
+}
+.native-home .service-detail-lead .native-detail-lead {
+  font-size: clamp(16px, 1.6vw, 21px);
+  margin-bottom: 0;
+  text-wrap: pretty;
+}
+.service-detail-image {
+  height: auto;
+  aspect-ratio: 3 / 2;
+  box-shadow: var(--finish-shadow);
+}
+
+/* Common finish on journal, training, contacts and document templates. */
+body .detail-page .detail-hero,
+body .article-top,
+body .journal-index > .journal-index-intro {
+  border-bottom: 1px solid var(--finish-line);
+}
+body .detail-page .detail-hero > p,
+body .article-top > p {
+  text-wrap: pretty;
+}
+body .journal-index > .journal-index-intro { padding-bottom: clamp(24px, 4vw, 46px); }
+body .detail-page .price-panel,
+body .detail-page .reading-callout,
+body .detail-page .related-formats {
+  border-color: var(--finish-line);
+  box-shadow: var(--finish-shadow);
+}
+body .detail-page .legal-content,
+body .detail-page .en-prose {
+  line-height: 1.72;
+  overflow-wrap: anywhere;
+}
+body .detail-page .contact-links-page > a {
+  transition: background-color .24s, border-color .24s;
+}
+body .detail-page .contact-links-page > a:is(:hover, :focus-visible) {
+  background-color: #eaf0f2;
+  border-color: #9aabb3;
+}
+body :is(.detail-page, .article-page, .journal-index, .native-detail) a:focus-visible {
+  outline: 2px solid #b73730;
+  outline-offset: 4px;
+}
+
+@media (max-width: 800px) {
+  html:has(link[rel="canonical"][href*="/services/"]) body:not(.native-home) .detail-hero,
+  .service-detail-lead {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  html:has(link[rel="canonical"][href*="/services/"]) body:not(.native-home) .detail-hero::after {
+    grid-column: 1;
+    grid-row: auto;
+    margin-top: 26px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body .section .service-grid .service-card,
+  body .service-grid .service-card::before,
+  body .service-grid .service-card::after,
+  .service-cover img {
+    animation: none !important;
+    transition: none !important;
+    translate: none !important;
+    scale: none !important;
+    transform: none !important;
+  }
+}
