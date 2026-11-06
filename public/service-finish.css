@@ -232,3 +232,31 @@ body :is(.detail-page, .article-page, .journal-index, .native-detail) a:focus-vi
     transform: none !important;
   }
 }
+
+/* Original photographs, with screenshot chrome excluded by layout only. */
+.native-home .coach-image img[src*="track-portrait"] { object-position:50% 36%; }
+.native-home .experience-gallery .photo-open:has(.archive-photo-frame) {
+ display:flex; align-items:center; justify-content:center; background:#e6ecee;
+}
+.archive-photo-frame { display:block; position:relative; overflow:hidden; width:100%; flex:0 0 auto; }
+body .archive-photo-frame img {
+ position:absolute; height:auto!important; max-width:none!important; max-height:none!important; object-fit:initial!important;
+ transform:none!important; margin:0!important;
+}
+.photo-dialog .archive-photo-frame.is-expanded {
+ width:min(76vw,650px); max-height:none;
+}
+.photo-dialog .archive-photo-frame.is-expanded:has(img[src*="track-start"]) { width:min(76vw,52vh); }
+.group-photo-story { display:grid; grid-template-columns:1.1fr 1fr; gap:clamp(28px,6vw,90px); align-items:center; }
+.group-photo-story figure { margin:0; }
+.group-photo-story figure>img { display:block; width:100%;height:auto;aspect-ratio:1.2;object-fit:cover;object-position:50% 38%; }
+.group-photo-story figcaption { font-size:12px; color:#526063; padding-top:14px; }
+.group-photo-story h2 { font-size:clamp(32px,4.2vw,62px); font-weight:500; line-height:1.08;letter-spacing:-.055em; margin:0 0 26px; }
+.group-photo-story p { font-size:17px;line-height:1.75;max-width:52ch; }
+.group-photo-story .text-link { margin-top:22px;display:inline-flex; gap:16px;align-items:center; }
+html:has(link[rel="canonical"][href$="/training/moscow"]) .detail-photo img[src*="training-group"] { object-position:50% 35%; }
+@media(max-width:800px) {
+ .group-photo-story { grid-template-columns:1fr; }
+ .group-photo-story p { font-size:16px; }
+ .photo-dialog .archive-photo-frame.is-expanded { width:min(82vw,650px); }
+}

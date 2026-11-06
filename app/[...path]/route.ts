@@ -218,8 +218,17 @@ export async function GET(request: Request, context: { params: Promise<{ path?: 
   }
 
   html = prepareSnapshot(html);
+  if (pathname === '/training/moscow') {
+    html = html.replaceAll('/media/training-warmup.webp', '/media/archive/training-group.webp')
+      .replaceAll('Разминка и работа над движениями на тренировке', 'Александр Селезнёв с участниками тренировочной группы');
+  }
+  if (pathname === '/en') {
+    html = html.replaceAll('/images/generated/premium-athlete-portrait.webp', '/media/archive/track-portrait.webp')
+      .replaceAll('Alexander Seleznev. Editorial portrait based on a photograph.', 'Alexander Seleznev at the athletics stadium');
+  }
+
   if (pathname === '/' || pathname === '/en') html = injectHead(html, '<link rel="preload" as="image" href="/images/generated/premium-stadium-hero.webp" fetchpriority="high">');
-  html = html.replace('</head>', '<link rel="preload" href="/fonts/onest-variable.ttf" as="font" type="font/ttf" crossorigin><link rel="stylesheet" href="/motion-refresh.css?v=scene-20261104"><link rel="stylesheet" href="/premium-sports.css?v=premium-20261104c"><link rel="stylesheet" href="/service-finish.css?v=1"></head>');
+  html = html.replace('</head>', '<link rel="preload" href="/fonts/onest-variable.ttf" as="font" type="font/ttf" crossorigin><link rel="stylesheet" href="/motion-refresh.css?v=scene-20261104"><link rel="stylesheet" href="/premium-sports.css?v=premium-20261104c"><link rel="stylesheet" href="/service-finish.css?v=photos-2"></head>');
   html = injectBodyEnd(html, '<script src="/vendor/gsap/gsap.min.js" defer></script><script src="/vendor/gsap/ScrollTrigger.min.js" defer></script><script src="/premium-sports.js?v=premium-20261104c" defer></script>');
 
   if (customPage) {
