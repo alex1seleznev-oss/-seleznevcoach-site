@@ -42,28 +42,28 @@ export function scienceArticle(slug: JournalEditionSlug, story: Story) {
       '@context':'https://schema.org', '@type':'BreadcrumbList',
       itemListElement:[['Главная', origin], ['Журнал', origin+'/journal'], [title, url]].map(([name,item],i) => ({'@type':'ListItem',position:i+1,name,item})),
     };
-    return <><Header/><main id="main" className="detail-page science-page">
+    return <><Header/><main id="main" className="detail-page science-page science-reading-page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{__html:jsonLd([blog,breadcrumb])}}/>
       <article>
         <header className="detail-hero section science-hero">
           <a className="detail-back" href="/journal">← В журнал</a>
-          <span className="mono">{entry.category} / {entry.readMinutes} МИН ЧТЕНИЯ</span>
           <h1>{title}</h1>
+          <span className="science-reading-meta">{entry.category} · {entry.readMinutes} мин чтения</span>
           <p>{story.opening}</p>
           <p className="journal-byline"><a href="/about" rel="author">{author.name}</a> · <time dateTime={editorialDate}>{dateLabel}</time></p>
         </header>
         <div className="detail-content section en-prose science-body">
+          <aside className="science-summary" aria-label="Короткий ответ"><strong>Короткий ответ</strong><p><Inline text={story.takeaway}/></p></aside>
+          <nav className="science-toc" aria-label="Содержание статьи">
+            <h2>Содержание</h2>
+            <ol>{story.sections.map(section => <li key={section.id}><a href={`#${section.id}`}>{section.heading}</a></li>)}<li><a href="#sources">Источники</a></li></ol>
+          </nav>
           <figure className="science-cover">
             <img src={entry.image} alt={entry.imageAlt} style={{objectPosition:entry.imagePosition}} loading="lazy"/>
             {entry.generated && <figcaption>Иллюстрация создана с помощью ИИ.{slug === 'running-shoes-runrepeat-guide' && ' На изображении условные модели, не участники сравнения.'}</figcaption>}
           </figure>
-          <aside className="science-summary" aria-label="Короткий ответ"><strong>Короткий ответ</strong><p><Inline text={story.takeaway}/></p></aside>
-          <nav className="science-toc" aria-label="Содержание статьи">
-            <strong>В статье</strong>
-            <ol>{story.sections.map(section => <li key={section.id}><a href={`#${section.id}`}>{section.heading}</a></li>)}</ol>
-          </nav>
           {story.sections.map(section => <section className="science-section" key={section.id} aria-labelledby={section.id}>
-            <h2 id={section.id}>{section.heading}</h2>
+            <h2 id={section.id} tabIndex={-1}>{section.heading}</h2>
             {section.paragraphs.map(p => <p key={p}><Inline text={p}/></p>)}
             {section.list && <ul>{section.list.map(p => <li key={p}><Inline text={p}/></li>)}</ul>}
             {section.table && <div className="science-table-scroll" tabIndex={0} role="region" aria-label={section.table.caption}><table className="journal-data-table">
@@ -73,7 +73,7 @@ export function scienceArticle(slug: JournalEditionSlug, story: Story) {
             </table></div>}
           </section>)}
           <aside className="science-summary" aria-label="Надёжность выводов"><strong>Что можно заключить</strong><p><Inline text={story.evidence}/></p></aside>
-          <section className="science-section" aria-labelledby="sources"><h2 id="sources">Источники</h2>
+          <section className="science-section" aria-labelledby="sources"><h2 id="sources" tabIndex={-1}>Источники</h2>
             <ol className="science-sources">{story.sources.map((source,i) => <li key={source.href} id={`source-${i+1}`}><a href={source.href}>{source.label}</a><p>{source.note}</p></li>)}</ol>
           </section>
           <div className="reading-callout"><span className="mono">ЧИТАТЬ ДАЛЬШЕ</span>{story.related.map(r => <a key={r.slug} href={`/journal/${r.slug}`}>{r.label} →</a>)}</div>
