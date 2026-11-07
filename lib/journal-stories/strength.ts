@@ -35,5 +35,5 @@ export const strength = {
     {label:'Llanos-Lagos et al., 2024 — силовые методы и экономичность бега',href:'https://pubmed.ncbi.nlm.nih.gov/38165636/',note:'Систематический обзор и метаанализ у бегунов на средние и длинные дистанции.'},
     {label:'Schumann et al., 2022 — совместимость аэробной и силовой работы',href:'https://doi.org/10.1007/s40279-021-01587-7',note:'Метаанализ: максимальная сила, размер мышц и взрывная сила оценивались отдельно.'},
   ],
-  related:[{label:'Как начать тренировать скорость',slug:'sprint-training-for-runners'},{label:'Как собрать беговую неделю',slug:'elite-endurance-training-week'}],
+  related:[{label:'Силовая для 800 и 1500 м: упражнения, веса и микроцикл',slug:'strength-training-middle-distance'},{label:'Как начать тренировать скорость',slug:'sprint-training-for-runners'},{label:'Как собрать беговую неделю',slug:'elite-endurance-training-week'}],
 } satisfies Story;

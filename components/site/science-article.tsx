@@ -66,7 +66,7 @@ export function scienceArticle(slug: JournalEditionSlug, story: Story) {
             <h2 id={section.id}>{section.heading}</h2>
             {section.paragraphs.map(p => <p key={p}><Inline text={p}/></p>)}
             {section.list && <ul>{section.list.map(p => <li key={p}><Inline text={p}/></li>)}</ul>}
-            {section.table && <div className="science-table-scroll"><table className="journal-data-table">
+            {section.table && <div className="science-table-scroll" tabIndex={0} role="region" aria-label={section.table.caption}><table className="journal-data-table">
               <caption>{section.table.caption}</caption>
               <thead><tr>{section.table.columns.map(c => <th key={c} scope="col">{c}</th>)}</tr></thead>
               <tbody>{section.table.rows.map(([head,...row]) => <tr key={head}><th scope="row"><Inline text={head}/></th>{row.map((c,i) => <td key={i}><Inline text={c}/></td>)}</tr>)}</tbody>
