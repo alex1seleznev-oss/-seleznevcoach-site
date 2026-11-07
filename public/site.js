@@ -158,6 +158,8 @@
 
     const sameDocument = url.pathname === window.location.pathname && url.search === window.location.search;
     if (sameDocument && url.hash) {
+      // Let editorial anchors move keyboard focus and scroll natively.
+      if (link.closest('.journal-index-edited, .science-reading-page')) return;
       let id;
       try { id = decodeURIComponent(url.hash.slice(1)); } catch { return; }
       const target = document.getElementById(id);

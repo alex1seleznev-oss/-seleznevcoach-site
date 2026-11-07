@@ -118,12 +118,12 @@ body .journal-index-edited > .journal-index-intro {
 .journal-topic {
   margin-block-start: clamp(2.25rem, 6vw, 5.25rem);
 }
-.journal-topic > h2 {
+body .journal-index-edited .journal-topic > h2 {
   margin: 0 0 1rem;
   font-size: clamp(1.65rem, 4vw, 3.35rem);
-  line-height: 1.12;
-  letter-spacing: -.035em;
-  scroll-margin-top: 6.75rem;
+  line-height: 1.12 !important;
+  letter-spacing: -.035em !important;
+  scroll-margin-top: 1rem;
 }
 .journal-features, .journal-archive {
   display: grid;
@@ -267,10 +267,10 @@ body .science-reading-page .science-body.section {
   padding-block: .85rem;
   margin-block: 0 1.6rem;
 }
-.science-reading-page .science-toc h2 {
+body .science-reading-page .science-toc h2 {
   margin: 0 0 .4rem;
   font-size: 1.25rem;
-  letter-spacing: -.02em;
+  letter-spacing: -.02em !important;
 }
 .science-reading-page .science-toc ol {
   display: grid;
@@ -290,11 +290,14 @@ body .science-reading-page .science-body.section {
 }
 .science-reading-page .science-toc a:is(:hover, :focus-visible) { color: #a52620; }
 .science-reading-page .science-cover img { aspect-ratio: 2.25 / 1; }
-.science-reading-page .science-section h2 {
+body .science-reading-page .science-section h2 {
   font-size: clamp(1.5rem, 3.5vw, 2.7rem);
-  letter-spacing: -.03em;
+  letter-spacing: -.03em !important;
+  line-height: 1.12 !important;
+  scroll-margin-top: 1rem;
   text-wrap: balance;
 }
+.science-reading-page .science-sources li { scroll-margin-top: 1rem; }
 .science-reading-page .science-table-scroll {
   margin-block: 1.5rem;
   scrollbar-color: #68777a #e6eaea;
