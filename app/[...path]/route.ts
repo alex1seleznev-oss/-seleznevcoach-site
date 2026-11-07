@@ -3,6 +3,8 @@ import snapshot from '../../snapshot/pages.json';
 import { defaultOgImage, seoTargets } from '../../lib/seo-targets';
 import { seoPages } from '../../lib/seo-pages';
 import { extraSeoPages } from '../../lib/seo-pages-extra';
+import { author, authorReference, jsonLd } from '../../lib/site-identity';
+import { journal } from '../../lib/site-content';
 
 const PUBLIC_ORIGIN = 'https://seleznevcoach.ru';
 const allSeoPages = { ...seoPages, ...extraSeoPages };
@@ -12,7 +14,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 function isProductionHost(request: Request) {
-  const host = new URL(request.url).hostname.toLowerCase();
+  const host = (request.headers.get('host')?.split(':')[0] || new URL(request.url).hostname).toLowerCase();
   return host === 'seleznevcoach.ru' || host === 'www.seleznevcoach.ru';
 }
 
@@ -116,12 +118,7 @@ function customStructuredData(pathname: string) {
   const canonical = publicUrl(pathname);
   const person = {
     '@context': 'https://schema.org',
-    '@type': 'Person',
-    '@id': `${PUBLIC_ORIGIN}/#alexander`,
-    name: 'Александр Селезнёв',
-    url: PUBLIC_ORIGIN,
-    jobTitle: 'Тренер по бегу и общей физической подготовке',
-    sameAs: ['https://t.me/seleznevcoach', 'https://t.me/runadapt', 'https://www.instagram.com/seleznevcoach/'],
+    ...author,
   };
   const label = routeLabel(pathname);
   const breadcrumb = {
@@ -159,9 +156,46 @@ function customStructuredData(pathname: string) {
     description: target?.description,
     url: canonical,
     mainEntityOfPage: canonical,
-    author: { '@id': `${PUBLIC_ORIGIN}/#alexander` },
-    image: defaultOgImage,
+    author: authorReference(),
+    inLanguage: 'ru',
+    image: journalImage(pathname),
   }];
+}
+
+function journalImage(pathname: string) {
+  const cover = journal.find(article => pathname.endsWith('/journal/' + article.slug))?.image;
+  return cover ? publicUrl(cover) : defaultOgImage;
+}
+
+function addArticleAttribution(html: string, pathname: string) {
+  const english = pathname.startsWith('/en/');
+  const canonical = publicUrl(pathname);
+  const displayName = english ? author.alternateName : author.name;
+  html = html.replace(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi, (tag, raw: string) => {
+    try {
+      const data = JSON.parse(raw);
+      if (data['@type'] === 'Person') {
+        return '<script type="application/ld+json">' + jsonLd({'@context': 'https://schema.org', ...author}) + '</script>';
+      }
+      if (data['@type'] === 'BlogPosting') {
+        return '<script type="application/ld+json">' + jsonLd({
+          ...data, url: canonical, mainEntityOfPage: canonical,
+          image: journalImage(pathname), author: authorReference(english),
+        }) + '</script>';
+      }
+    } catch { /* Preserve unrelated captured markup. */ }
+    return tag;
+  });
+  html = html.replace(/<main\b[\s\S]*?<\/main>/i, main => main
+    .replace(/<span class="mono">АЛЕКСАНДР СЕЛЕЗНЁВ \/ ЗАМЕТКИ ТРЕНЕРА[\s\S]*?<\/span>/, '')
+    .replace('</header>', '<p class="journal-byline"><a href="/about" rel="author">' + displayName + '</a></p></header>'));
+  if (!english) {
+    const title = journal.find(article => pathname.endsWith('/journal/' + article.slug))?.title;
+    if (title) {
+      html = html.replace('</main>', '<div class="section"><p class="journal-citation">Для ссылки: Селезнёв А. «' + title + '». <a href="' + canonical + '">Постоянный адрес статьи</a>.</p><p><a href="/journal">Все статьи о беге →</a></p></div></main>');
+    }
+  }
+  return injectHead(html, '<link rel="stylesheet" href="/editorial-seo.css">');
 }
 
 function applyCustomRouteSeo(html: string, pathname: string) {
@@ -191,8 +225,9 @@ function addSeoEnhancements(html: string, pathname: string) {
     html = replaceMeta(html, 'name', 'twitter:description', target.description);
   }
   html = replaceMeta(html, 'name', 'twitter:card', 'summary_large_image');
-  html = replaceMeta(html, 'property', 'og:image', defaultOgImage);
-  html = replaceMeta(html, 'name', 'twitter:image', defaultOgImage);
+  const image = journalImage(pathname);
+  html = replaceMeta(html, 'property', 'og:image', image);
+  html = replaceMeta(html, 'name', 'twitter:image', image);
   if (!/hreflang=["']x-default["']/i.test(html)) {
     html = injectHead(html, `<link rel="alternate" hreflang="x-default" href="${publicUrl(russianEquivalent(pathname))}">`);
   }
@@ -240,6 +275,9 @@ export async function GET(request: Request, context: { params: Promise<{ path?: 
     html = fixCustomLanguageSwitch(html);
   }
 
+  if (/^(?:\/en)?\/journal\//.test(pathname)) {
+    html = addArticleAttribution(stripCustomHydration(html), pathname);
+  }
   html = addSeoEnhancements(html, pathname);
   const indexable = productionHost && seoTargets[pathname]?.indexable !== false;
   html = setRobotsMeta(html, indexable);

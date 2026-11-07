@@ -1,7 +1,7 @@
 const PROD_HOSTS = new Set(['seleznevcoach.ru', 'www.seleznevcoach.ru']);
 
 export function GET(request: Request) {
-  const host = new URL(request.url).hostname.toLowerCase();
+  const host = (request.headers.get('host')?.split(':')[0] || new URL(request.url).hostname).toLowerCase();
   const production = PROD_HOSTS.has(host);
 
   const body = production

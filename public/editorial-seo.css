@@ -1,0 +1,27 @@
+.journal-grid .journal-card-title {
+  margin: 0;
+  padding: 0;
+  font-size: clamp(18px, 2vw, 27px);
+  line-height: 1.2;
+  letter-spacing: -.035em;
+}
+.journal-byline { font-size: .9rem; margin-block: 1rem; }
+.journal-byline a, .journal-citation a, .journal-index-intro a, .author-page .en-prose a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}
+.journal-citation { border-top: 1px solid #bbc3c6; padding-top: 1rem; font-size: .9rem; }
+.journal-data-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; margin-block: 1.5rem; }
+.journal-data-table caption { text-align: left; margin-bottom: .7rem; }
+.journal-data-table :is(th, td) { border-bottom: 1px solid #bbc3c6; padding: .7rem .25rem; text-align: left; }
+.author-content { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1fr); gap: clamp(1.5rem, 5vw, 5rem); align-items: start; }
+.author-portrait { margin: 0; }
+.author-portrait img { display: block; width: 100%; max-width: 420px; height: auto; }
+.author-portrait figcaption { margin-top: .6rem; font-size: .85rem; }
+.author-records { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+.author-records dd { margin: 0; font-size: clamp(1.25rem, 3vw, 2.1rem); font-weight: 600; font-variant-numeric: tabular-nums; }
+@media (max-width: 760px) {
+  .author-content { grid-template-columns: 1fr; }
+  .journal-data-table { font-size: clamp(.75rem, 3.4vw, 1rem); }
+}

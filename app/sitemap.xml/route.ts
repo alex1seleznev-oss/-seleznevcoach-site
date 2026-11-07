@@ -1,7 +1,7 @@
 import { seoTargets } from '../../lib/seo-targets';
 
 const ORIGIN = 'https://seleznevcoach.ru';
-const LASTMOD = '2026-10-05';
+const UPDATED = new Set(['/', '/about', '/journal']);
 const PROD_HOSTS = new Set(['seleznevcoach.ru', 'www.seleznevcoach.ru']);
 
 function esc(value: string) {
@@ -28,30 +28,13 @@ function enEquivalent(pathname: string) {
   return `/en${pathname}`;
 }
 
-function priority(pathname: string) {
-  if (pathname === '/' || pathname === '/en') return '1.0';
-  if (pathname === '/training/online' || pathname === '/training/moscow') return '0.9';
-  if (pathname.startsWith('/training/')) return '0.85';
-  if (pathname.startsWith('/services/')) return '0.8';
-  if (pathname === '/journal' || pathname === '/en/journal') return '0.75';
-  if (pathname.includes('/journal/')) return '0.7';
-  if (pathname.endsWith('/contacts') || pathname === '/contacts') return '0.6';
-  return '0.5';
-}
-
-function changefreq(pathname: string) {
-  if (pathname === '/' || pathname === '/en' || pathname === '/journal' || pathname === '/en/journal') return 'weekly';
-  return 'monthly';
-}
-
 export function GET(request: Request) {
-  const host = new URL(request.url).hostname.toLowerCase();
+  const host = (request.headers.get('host')?.split(':')[0] || new URL(request.url).hostname).toLowerCase();
   const production = PROD_HOSTS.has(host);
 
   const paths = Object.entries(seoTargets)
     .filter(([, target]) => target.indexable !== false)
     .map(([pathname]) => pathname)
-    .concat(['/services/kids', '/services/sport-conditioning'])
     .sort((a, b) => a.localeCompare(b, 'en'));
 
   const body = paths.map((pathname) => {
@@ -63,7 +46,9 @@ export function GET(request: Request) {
       ? `\n    <xhtml:link rel="alternate" hreflang="ru" href="${esc(absolute(ru))}"/>\n    <xhtml:link rel="alternate" hreflang="en" href="${esc(absolute(en))}"/>\n    <xhtml:link rel="alternate" hreflang="x-default" href="${esc(absolute(ru))}"/>`
       : '';
 
-    return `  <url>\n    <loc>${esc(absolute(pathname))}</loc>\n    <lastmod>${['/', '/services/kids', '/services/sport-conditioning'].includes(pathname) ? '2026-11-04' : LASTMOD}</lastmod>\n    <changefreq>${changefreq(pathname)}</changefreq>\n    <priority>${priority(pathname)}</priority>${alternates}\n  </url>`;
+    const lastmod = UPDATED.has(pathname) || /^(?:\/en)?\/journal\//.test(pathname)
+      ? '\n    <lastmod>2026-11-07</lastmod>' : '';
+    return '  <url>\n    <loc>' + esc(absolute(pathname)) + '</loc>' + lastmod + alternates + '\n  </url>';
   }).join('\n');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${body}\n</urlset>\n`;
