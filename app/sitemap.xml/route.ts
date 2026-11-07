@@ -1,5 +1,7 @@
 import { seoTargets } from '../../lib/seo-targets';
 
+import { editorialDate, journalEditions } from '../../lib/journal-editions';
+
 const ORIGIN = 'https://seleznevcoach.ru';
 const UPDATED = new Set(['/', '/about', '/journal']);
 const PROD_HOSTS = new Set(['seleznevcoach.ru', 'www.seleznevcoach.ru']);
@@ -35,6 +37,7 @@ export function GET(request: Request) {
   const paths = Object.entries(seoTargets)
     .filter(([, target]) => target.indexable !== false)
     .map(([pathname]) => pathname)
+    .concat(journalEditions.map(article => '/journal/' + article.slug))
     .sort((a, b) => a.localeCompare(b, 'en'));
 
   const body = paths.map((pathname) => {
@@ -47,7 +50,7 @@ export function GET(request: Request) {
       : '';
 
     const lastmod = UPDATED.has(pathname) || /^(?:\/en)?\/journal\//.test(pathname)
-      ? '\n    <lastmod>2026-11-07</lastmod>' : '';
+      ? '\n    <lastmod>' + editorialDate + '</lastmod>' : '';
     return '  <url>\n    <loc>' + esc(absolute(pathname)) + '</loc>' + lastmod + alternates + '\n  </url>';
   }).join('\n');
 

@@ -25,3 +25,23 @@
   .author-content { grid-template-columns: 1fr; }
   .journal-data-table { font-size: clamp(.75rem, 3.4vw, 1rem); }
 }
+
+.science-page .science-hero h1{font-size:clamp(2.6rem,6.3vw,6rem);max-width:22ch;overflow-wrap:break-word}
+.science-page .science-hero p{max-width:66ch}
+.science-page .science-body{max-width:1080px}
+.science-cover{margin:0 0 2rem}
+.science-cover img{display:block;width:100%;aspect-ratio:2/1;object-fit:cover}
+.science-cover figcaption{font-size:.78rem;margin-top:.6rem;color:#555d5e}
+.science-summary{background:#e7eeeb;border-left:3px solid #546c61;padding:1.15rem clamp(1rem,3vw,1.75rem);margin:1.75rem 0}
+.science-summary p,.science-sources p{margin:.4rem 0 0}
+.science-toc{margin:2rem 0;padding:1.2rem 0;border-block:1px solid #c7cfcc}
+.science-toc ol,.science-sources{padding-left:1.35em}
+.science-toc li,.science-sources li{margin:.6em 0}
+.science-page .science-section h2{font-size:clamp(1.65rem,4vw,3.15rem);line-height:1.12;margin:2.2rem 0 .8rem;scroll-margin-top:7rem}
+.science-sources li{scroll-margin-top:7rem}
+.science-body a{color:inherit;text-decoration:underline;text-underline-offset:.16em}
+.science-body sup{margin-inline:.13em;font-size:.68em}
+.science-table-scroll{overflow-x:auto}
+.science-table-scroll .journal-data-table{min-width:31rem}
+.science-table-scroll .journal-data-table th,.science-table-scroll .journal-data-table td{padding:.65em .7em}
+@media(max-width:620px){.science-cover img{aspect-ratio:4/3}.science-page .science-hero h1{font-size:clamp(2.1rem,9.2vw,3.5rem)}}

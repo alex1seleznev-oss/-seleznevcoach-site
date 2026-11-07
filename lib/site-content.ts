@@ -1,3 +1,4 @@
+import { journalEditions } from './journal-editions';
 export const siteConfig = {
   name: 'Александр Селезнёв',
   telegram: 'https://t.me/seleznevcoach',
@@ -28,4 +29,5 @@ export const journal = [
  { slug:'400-vs-1000-intervals', category:'ТРЕНИРОВКИ', number:'03', readMinutes:7, title:'10×400 и 5×1000: почему это разные тренировочные стимулы', teaser:'Длина отрезка – только начало. На характер работы влияют скорость, паузы, суммарный объём и накопленная усталость.', image:'/media/mountain-run.jpeg', imagePosition:'50% 55%', points:['Как длительность повторения влияет на кислородную кинетику.','Как пауза и темп меняют запрос к аэробному и анаэробному обеспечению.','Почему по одной записи «10×400» нельзя определить задачу занятия.'] },
  { slug:'heart-rate-zones-running', category:'ФИЗИОЛОГИЯ', number:'04', readMinutes:3, title:'Пульсовые зоны для бега: как определить и использовать', teaser:'Как сопоставлять ЧСС, темп и ощущения, когда часы показывают не то, чего вы ожидали.', image:'/media/mountain-track.jpeg', imagePosition:'50% 42%', points:[] },
  { slug:'5k-pace-1524', category:'ПРАКТИКА', number:'05', readMinutes:4, title:'Как рассчитать темп на 5 км: разбор результата 15:24', teaser:'Средний темп, ориентиры на стадионе и пример равномерной раскладки по километрам.', image:'/media/race-autumn.webp', imagePosition:'50% 45%', points:[] },
+ ...journalEditions.map(article => ({...article, points: [] as string[]})),
 ];
