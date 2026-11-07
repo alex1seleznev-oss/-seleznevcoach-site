@@ -1,3 +1,5 @@
+import { eliteEditions } from './elite-dossiers/editions';
+
 export const editorialDate = '2026-11-07';
 
 export const journalEditions = [
@@ -7,6 +9,7 @@ export const journalEditions = [
   {slug:'strength-training-without-bulk', category:'СИЛОВАЯ', number:'09', readMinutes:5, title:'Стану ли я крупнее от тренажёрного зала? Силовая подготовка для бегунов', teaser:'Разбираем, почему сила, мышечная масса и экономичность бега меняются по-разному. Пример первой силовой тренировки.', image:'/media/training-warmup.webp', imagePosition:'50% 50%', imageAlt:'Подготовка спортсмена к тренировке', generated:false},
   {slug:'what-to-wear-running-weather', category:'ЭКИПИРОВКА', number:'10', readMinutes:6, title:'Как одеваться на пробежку в жару, дождь и мороз', teaser:'Три слоя, четыре погодных сценария и способ подобрать одежду под ветер, влажность и интенсивность пробежки.', image:'/images/journal/running-layers.webp', imagePosition:'50% 50%', imageAlt:'Бегун в лёгкой ветрозащитной куртке на осеннем стадионе', generated:true},
   {slug:'running-shoes-runrepeat-guide', category:'ЭКИПИРОВКА', number:'11', readMinutes:6, title:'Как выбрать беговые кроссовки: три модели по данным лаборатории RunRepeat', teaser:'ASICS Novablast 5, adidas Adizero EVO SL и Brooks Ghost 17: сравнение лабораторных измерений, назначение и примерка.', image:'/images/journal/running-shoes-lab.webp', imagePosition:'50% 50%', imageAlt:'Беговые кроссовки и штангенциркуль на лабораторном столе', generated:true},
+  ...eliteEditions,
 ] as const;
 
 export type JournalEditionSlug = typeof journalEditions[number]['slug'];

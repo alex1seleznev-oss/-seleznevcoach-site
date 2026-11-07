@@ -45,3 +45,28 @@
 .science-table-scroll .journal-data-table{min-width:31rem}
 .science-table-scroll .journal-data-table th,.science-table-scroll .journal-data-table td{padding:.65em .7em}
 @media(max-width:620px){.science-cover img{aspect-ratio:4/3}.science-page .science-hero h1{font-size:clamp(2.1rem,9.2vw,3.5rem)}}
+
+/* Long-form athlete dossiers */
+.elite-page .elite-profile { margin-block: 4rem; padding-top: 2.3rem; border-top: 1px solid #c7cecc; }
+.elite-page .elite-profile-lead { display:grid; grid-template-columns: minmax(0,1fr) minmax(0, .85fr); align-items:start; gap:clamp(1.25rem,4vw,3rem); }
+.elite-page .elite-profile-lead h2 { margin-block:.35em .25em; }
+.elite-page .elite-result { font-weight:700; color:#a52620; font-variant-numeric:tabular-nums; }
+.elite-page .elite-photo { margin:0; }
+.elite-page .elite-photo img { display:block; width:100%; height:auto; max-height:29rem; object-fit:contain; background:#e5e8e6; }
+.elite-page .elite-photo figcaption { font-size:.81rem; line-height:1.5; color:#495552; padding-top:.55rem; }
+.elite-page .elite-preparation { margin:0 0 2rem; }
+.elite-page .elite-preparation > div { display:grid; grid-template-columns:minmax(9.5rem, .36fr) minmax(0,1fr); gap:1.2rem; border-top:1px solid #d1d7d4; padding:.75rem 0; }
+.elite-page .elite-preparation dt { font-weight:700; }
+.elite-page .elite-preparation dd { margin:0; line-height:1.7; color:#495552; }
+.elite-page .elite-phases li { padding-left:.4rem; }
+.elite-page .elite-phases li p { margin:.2rem 0 .8rem; }
+.elite-page .elite-limit { border-left:2px solid #8d9d97; padding-left:1rem; }
+.elite-page .elite-lesson { border-left:2px solid #a52620; padding-left:1rem; }
+.elite-page [id] { scroll-margin-top:7rem; }
+.elite-page .science-table-scroll table { min-width:38rem; }
+@media (max-width: 650px) {
+  .elite-page .elite-profile { margin-block:3rem; }
+  .elite-page .elite-profile-lead, .elite-page .elite-preparation > div { grid-template-columns:1fr; }
+  .elite-page .elite-preparation > div { gap:.24rem; }
+  .elite-page .elite-photo img { max-height:26rem; }
+}
