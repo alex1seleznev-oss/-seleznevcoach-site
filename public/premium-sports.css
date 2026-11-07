@@ -132,7 +132,25 @@ body .experience-photos{border-top:1px solid var(--motion-line)}
 body .experience-gallery .photo-open{height:35vw;max-height:520px;min-height:260px}
 body .coaching-questions{border-top:1px solid var(--motion-line)}
 body .coaching-questions .mono{display:none}
-body .coaching-questions button{font-weight:450;font-size:clamp(18px,2vw,25px);letter-spacing:-.025em}
+body .coaching-questions .questions-list [data-slot="accordion-trigger"] {
+  color: var(--motion-ink);
+  font-weight: 450;
+  font-size: clamp(18px, 2vw, 25px);
+  letter-spacing: -.025em;
+}
+body .coaching-questions .questions-list [data-slot="accordion-trigger"]:hover {
+  color: var(--signal);
+}
+body :is(.coaching-questions [data-slot="accordion-trigger"], .en-faq summary):focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+body :is(.coaching-questions .questions-list [data-slot="accordion-content"], .en-faq details) p {
+  color: var(--motion-muted);
+  font-size: clamp(1rem, 1.35vw, 1.125rem);
+  line-height: 1.65;
+  max-width: 65ch;
+}
 body .contact.section{border-top:1px solid var(--motion-line)}
 body .contact-title{font-size:clamp(46px,7.3vw,114px)!important;letter-spacing:-.07em;max-width:1200px}
 body .contact-grid{gap:12%;margin-top:65px}
