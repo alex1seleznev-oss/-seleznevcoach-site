@@ -76,6 +76,10 @@ export function scienceArticle(slug: JournalEditionSlug, story: Story) {
           <section className="science-section" aria-labelledby="sources"><h2 id="sources" tabIndex={-1}>Источники</h2>
             <ol className="science-sources">{story.sources.map((source,i) => <li key={source.href} id={`source-${i+1}`} tabIndex={-1}><a href={source.href}>{source.label}</a><p>{source.note}</p></li>)}</ol>
           </section>
+          <aside className="article-training-link" aria-label="Подготовка с тренером">
+            <strong>Хотите применить это в своей подготовке?</strong>
+            <a href="/training/online">Как проходит работа с онлайн-тренером →</a>
+          </aside>
           <div className="reading-callout"><span className="mono">ЧИТАТЬ ДАЛЬШЕ</span>{story.related.map(r => <a key={r.slug} href={`/journal/${r.slug}`}>{r.label} →</a>)}</div>
           <p className="journal-citation">Для ссылки: Селезнёв А. «{title}». {dateLabel} <a href={url}>Постоянный адрес статьи</a>.</p>
         </div>

@@ -4,7 +4,8 @@ import { defaultOgImage, seoTargets } from '../../lib/seo-targets';
 import { seoPages } from '../../lib/seo-pages';
 import { extraSeoPages } from '../../lib/seo-pages-extra';
 import { author, authorReference, jsonLd } from '../../lib/site-identity';
-import { journal } from '../../lib/site-content';
+import { journal, siteConfig } from '../../lib/site-content';
+import { telegramBotLink } from '../../lib/telegram-bot';
 
 const PUBLIC_ORIGIN = 'https://seleznevcoach.ru';
 const allSeoPages = { ...seoPages, ...extraSeoPages };
@@ -39,8 +40,8 @@ function prepareSnapshot(html: string) {
     .replaceAll('Message Alexander on Telegram', 'Open Telegram bot').replaceAll('Message Alexander', 'Open Telegram bot');
   // Captured filenames are fixed; invalidate old browser copies of patched scripts.
   html = html.replace(/(src=["']\/legacy-next\/[^"']+\.js)(["'])/g, '$1?v=premium-20261104$2');
-  if (!html.includes('src="/site.js?v=services-1"')) {
-    html = injectBodyEnd(html, '<script src="/site.js?v=services-1" defer></script>');
+  if (!html.includes('src="/site.js?v=leads-1"')) {
+    html = injectBodyEnd(html, '<script src="/site.js?v=leads-1" defer></script>');
   }
   return html;
 }
@@ -214,6 +215,31 @@ function fixCustomLanguageSwitch(html: string) {
   );
 }
 
+const trainingOffers = {
+  '/training/online': { heading: 'Онлайн-тренер по бегу', label: 'Обсудить онлайн-подготовку', format: 'online', bot: 'personal', message: 'Здравствуйте! Я с сайта. Хочу обсудить онлайн-подготовку по бегу. Моя цель: ' },
+  '/training/moscow': { heading: 'Тренировки по бегу в Москве', label: 'Уточнить ближайшее занятие', format: 'moscow', bot: 'group', message: 'Здравствуйте! Я с сайта. Хочу узнать о тренировках по бегу в Москве. Интересует: ' },
+  '/training/5k': { heading: 'Подготовка к 5 км с тренером', label: 'Обсудить подготовку к 5 км', format: '5k', bot: 'performance', message: 'Здравствуйте! Я с сайта. Хочу подготовиться к 5 км. Моя цель: ' },
+} as const;
+
+function addTrainingContact(html: string, pathname: string) {
+  if (!Object.hasOwn(trainingOffers, pathname)) return html;
+  const offer = trainingOffers[pathname as keyof typeof trainingOffers];
+  const draft = encodeURIComponent(offer.message);
+  const placement = `data-coaching-placement="training_intro" data-coaching-format="${offer.format}"`;
+  const contact = `<div class="training-contact" id="training-contact">
+    <p>Напишите свою цель и текущий уровень. Подскажу, с какого формата начать.</p>
+    <div class="training-contact-links">
+      <a class="training-contact-primary" href="${telegramBotLink(offer.bot)}" target="_blank" rel="noreferrer" ${placement} data-coaching-channel="telegram">${offer.label} в Telegram</a>
+      ${siteConfig.whatsapp ? `<a href="${siteConfig.whatsapp}?text=${draft}" target="_blank" rel="noreferrer" ${placement} data-coaching-channel="whatsapp">WhatsApp</a>` : ''}
+      <a href="mailto:${siteConfig.email}?subject=${encodeURIComponent(offer.label)}&amp;body=${draft}" ${placement} data-coaching-channel="email">Почта</a>
+    </div>
+  </div>`;
+  return stripCustomHydration(html).replace(/<main\b[\s\S]*?<\/main>/i, main => main
+    .replace(/(<header\b[^>]*>[\s\S]*?<h1[^>]*>)[\s\S]*?(<\/h1>[\s\S]*?)<\/header>/i,
+      (_match, before: string, after: string) => before + offer.heading + after + contact + '</header>')
+    .replaceAll('href="/#contact"', 'href="#training-contact"'));
+}
+
 function addSeoEnhancements(html: string, pathname: string) {
   const target = seoTargets[pathname];
   if (target) {
@@ -263,7 +289,7 @@ export async function GET(request: Request, context: { params: Promise<{ path?: 
   }
 
   if (pathname === '/' || pathname === '/en') html = injectHead(html, '<link rel="preload" as="image" href="/images/generated/premium-stadium-hero.webp" fetchpriority="high">');
-  html = html.replace('</head>', '<link rel="preload" href="/fonts/onest-variable.ttf" as="font" type="font/ttf" crossorigin><link rel="stylesheet" href="/motion-refresh.css?v=scene-20261104"><link rel="stylesheet" href="/premium-sports.css?v=faq-1"><link rel="stylesheet" href="/service-finish.css?v=photos-2"></head>');
+  html = html.replace('</head>', '<link rel="preload" href="/fonts/onest-variable.ttf" as="font" type="font/ttf" crossorigin><link rel="stylesheet" href="/motion-refresh.css?v=scene-20261104"><link rel="stylesheet" href="/premium-sports.css?v=faq-1"><link rel="stylesheet" href="/service-finish.css?v=leads-1"></head>');
   html = injectBodyEnd(html, '<script src="/vendor/gsap/gsap.min.js" defer></script><script src="/vendor/gsap/ScrollTrigger.min.js" defer></script><script src="/premium-sports.js?v=premium-20261104c" defer></script>');
 
   if (customPage) {
@@ -278,6 +304,7 @@ export async function GET(request: Request, context: { params: Promise<{ path?: 
   if (/^(?:\/en)?\/journal\//.test(pathname)) {
     html = addArticleAttribution(stripCustomHydration(html), pathname);
   }
+  html = addTrainingContact(html, pathname);
   html = addSeoEnhancements(html, pathname);
   const indexable = productionHost && seoTargets[pathname]?.indexable !== false;
   html = setRobotsMeta(html, indexable);

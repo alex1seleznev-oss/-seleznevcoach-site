@@ -260,3 +260,51 @@ html:has(link[rel="canonical"][href$="/training/moscow"]) .detail-photo img[src*
  .group-photo-story p { font-size:16px; }
  .photo-dialog .archive-photo-frame.is-expanded { width:min(82vw,650px); }
 }
+
+.training-contact {
+  margin-top: 1.25rem;
+  scroll-margin-top: 1rem;
+}
+.training-contact > p {
+  margin: 0 0 .65rem;
+  max-width: 58ch;
+  line-height: 1.55;
+}
+.training-contact-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+}
+.training-contact-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: .5rem 0;
+  color: var(--motion-ink);
+  text-decoration: underline;
+  text-underline-offset: .22em;
+}
+.training-contact-links a.training-contact-primary {
+  background: var(--signal);
+  color: #fff;
+  padding-inline: .9rem;
+  text-decoration: none;
+  font-weight: 650;
+}
+.training-contact-links a.training-contact-primary:hover {
+  background: #94271f;
+}
+.article-training-link {
+  margin-block: 2rem;
+  padding-block: .9rem;
+  border-block: 1px solid var(--motion-line);
+}
+.article-training-link strong, .article-training-link a {
+  display: block;
+}
+.article-training-link a {
+  width: fit-content;
+  padding-block: .5rem;
+  min-height: 44px;
+}

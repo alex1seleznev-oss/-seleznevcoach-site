@@ -126,6 +126,15 @@
     if (!link) return;
     let url;
     try { url = new URL(link.href, window.location.href); } catch { return; }
+    const { coachingChannel, coachingFormat, coachingPlacement } = link.dataset;
+    if (coachingChannel && coachingFormat && coachingPlacement) {
+      track('coaching_contact_click', {
+        contact_channel: coachingChannel,
+        coaching_format: coachingFormat,
+        contact_placement: coachingPlacement,
+        page_path: window.location.pathname,
+      });
+    }
     const kind = classifyLink(url, link);
     if (kind) {
       track(kind.event, {
