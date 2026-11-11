@@ -46,7 +46,8 @@ export function ExperienceHero(){
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const direction=directionHint||(toIndex>fromIndex?1:-1);
   busy.current=true;setTransitioning(true);
-  gsap.killTweensOf([...backgrounds.current.filter(Boolean),person.current,...root.current.querySelectorAll('.portal-surface')]);
+  gsap.killTweensOf([...backgrounds.current.filter(Boolean),person.current,copy.current,...root.current.querySelectorAll('.portal-surface')]);
+  gsap.set(copy.current,{clearProps:'transform,opacity'});
   gsap.set(root.current.querySelectorAll('.portal-surface'),{clearProps:'transform,opacity'});
   if(index!==null){
    const deck=cards.current[index]?.parentElement,card=cards.current[index];
@@ -107,7 +108,7 @@ export function ExperienceHero(){
  const selectRelative=(delta:number)=>choose(active===null?(delta>0?0:formats.length-1):(active+delta+formats.length)%formats.length,delta>0?1:-1);
  const resetPointer=()=>{moveEnvironmentX.current?.(0);moveEnvironmentY.current?.(0);movePersonX.current?.(0);moveSpaceY.current?.(0)};
  return <section id="athlete" ref={root} className={`experience-hero ${current?'is-active':'is-overview'}`} aria-label="Форматы подготовки" aria-busy={transitioning} onTouchStart={event=>{const t=event.touches[0];if(!t)return;swipe.current={x:t.clientX,y:t.clientY,ignore:t.clientX<28||Boolean((event.target as HTMLElement).closest('.portal-deck'))};}} onTouchEnd={event=>{const start=swipe.current;swipe.current=null;const t=event.changedTouches[0];if(!start||start.ignore||!t)return;const dx=t.clientX-start.x,dy=t.clientY-start.y;if(Math.abs(dx)>=65&&Math.abs(dx)>Math.abs(dy)*1.4)selectRelative(dx<0?1:-1);}} onTouchCancel={()=>{swipe.current=null}} onPointerMove={event=>{
-  if(event.pointerType!=='mouse')return;
+  if(event.pointerType!=='mouse'||busy.current)return;
   const box=event.currentTarget.getBoundingClientRect(),x=(event.clientX-box.left)/box.width-.5,y=(event.clientY-box.top)/box.height-.5;
   moveEnvironmentX.current?.(-x*18);moveEnvironmentY.current?.(-y*10);movePersonX.current?.(x*22);moveSpaceY.current?.(-x*5);
  }} onPointerLeave={resetPointer}>
