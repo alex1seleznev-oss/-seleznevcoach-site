@@ -14,6 +14,7 @@ const formats=[
 export function ExperienceHero(){
  const root=useRef<HTMLElement>(null),environment=useRef<HTMLDivElement>(null),person=useRef<HTMLDivElement>(null),space=useRef<HTMLDivElement>(null),copy=useRef<HTMLDivElement>(null);
  const backgrounds=useRef<(HTMLDivElement|null)[]>([]),cards=useRef<(HTMLButtonElement|null)[]>([]);
+ const swipe=useRef<{x:number;y:number;ignore:boolean}|null>(null);
  const busy=useRef(false),mounted=useRef(true),moveEnvironmentX=useRef<((v:number)=>void)|null>(null),moveEnvironmentY=useRef<((v:number)=>void)|null>(null),movePersonX=useRef<((v:number)=>void)|null>(null),moveSpaceY=useRef<((v:number)=>void)|null>(null);
  const [active,setActive]=useState<number|null>(null),[transitioning,setTransitioning]=useState(false);
  const current=active===null?null:formats[active];
@@ -36,35 +37,78 @@ export function ExperienceHero(){
   });
   return()=>{mounted.current=false;media.revert()};
  },{scope:root});
- const choose=contextSafe((index:number|null)=>{
-  if(index===active||busy.current||!root.current)return;
-  const targetIndex=index===null?0:index+1;
-  const target=backgrounds.current[targetIndex];if(!target)return;
-  busy.current=true;setTransitioning(true);
-  const bounds=root.current.getBoundingClientRect();
-  const source=index===null?null:cards.current[index]?.getBoundingClientRect();
-  const top=source?Math.max(0,source.top-bounds.top):bounds.height*.42;
-  const right=source?Math.max(0,bounds.right-source.right):bounds.width*.36;
-  const bottom=source?Math.max(0,bounds.bottom-source.bottom):bounds.height*.42;
-  const left=source?Math.max(0,source.left-bounds.left):bounds.width*.36;
-  gsap.killTweensOf([person.current,...root.current.querySelectorAll('.portal-surface')]);
-  gsap.set(person.current,{clearProps:'opacity,y'});
-  gsap.set(root.current.querySelectorAll('.portal-surface'),{clearProps:'transform,opacity'});
-  setActive(index);
+
+ const choose=contextSafe((index:number|null, directionHint?:number)=>{
+  if(index===active||busy.current||!root.current||!copy.current)return;
+  const fromIndex=active===null?0:active+1, toIndex=index===null?0:index+1;
+  const from=backgrounds.current[fromIndex], to=backgrounds.current[toIndex];
+  if(!from||!to)return;
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(index!==null){const deck=cards.current[index]?.parentElement,card=cards.current[index];if(deck&&card&&deck.scrollWidth>deck.clientWidth)deck.scrollTo({left:card.offsetLeft-(deck.clientWidth-card.clientWidth)/2,behavior:reduced?'instant':'smooth'})}
-  gsap.killTweensOf(backgrounds.current.filter(Boolean));
-  gsap.set(target,{zIndex:2,opacity:1});
-  gsap.fromTo(target,{clipPath:`inset(${top}px ${right}px ${bottom}px ${left}px round 4px)`},{clipPath:'inset(0px 0px 0px 0px round 0px)',duration:reduced?0:1.08,ease:'power3.inOut',onComplete:()=>{
-   backgrounds.current.forEach((bg,i)=>{if(bg)gsap.set(bg,{opacity:i===targetIndex?1:0,zIndex:i===targetIndex?1:0,clearProps:'clipPath'})});
-   busy.current=false;if(mounted.current)setTransitioning(false);
-  }});
-  if(!reduced)gsap.fromTo(copy.current!.querySelectorAll('h1, .experience-description, .experience-detail'),{y:24,opacity:0},{y:0,opacity:1,stagger:.06,duration:.65,delay:.15,ease:'power3.out',clearProps:'transform,opacity'});
+  const direction=directionHint||(toIndex>fromIndex?1:-1);
+  busy.current=true;setTransitioning(true);
+  gsap.killTweensOf([...backgrounds.current.filter(Boolean),person.current,copy.current,...root.current.querySelectorAll('.portal-surface')]);
+  gsap.set(copy.current,{clearProps:'transform,opacity'});
+  gsap.set(root.current.querySelectorAll('.portal-surface'),{clearProps:'transform,opacity'});
+  if(index!==null){
+   const deck=cards.current[index]?.parentElement,card=cards.current[index];
+   if(deck&&card&&deck.scrollWidth>deck.clientWidth)deck.scrollTo({left:card.offsetLeft-(deck.clientWidth-card.clientWidth)/2,behavior:reduced?'instant':'smooth'});
+  }
+  if(reduced){
+   backgrounds.current.forEach((bg,i)=>{if(bg)gsap.set(bg,{xPercent:0,opacity:i===toIndex?1:0,zIndex:i===toIndex?1:0,clearProps:'transform'})});
+   gsap.set(copy.current,{clearProps:'transform,opacity'});
+   gsap.set(person.current,{clearProps:'transform,opacity'});
+   setActive(index);busy.current=false;setTransitioning(false);
+   return;
+  }
+  // Keep the old headline in its own layer until it has left the viewport.
+  // The live React copy can then update without an abrupt text replacement.
+  const liveCopy=copy.current;
+  const exitCopy=liveCopy.cloneNode(true) as HTMLDivElement;
+  exitCopy.classList.add('experience-copy-exit');
+  exitCopy.setAttribute('aria-hidden','true');
+  exitCopy.setAttribute('aria-live','off');
+  const copyStyle=getComputedStyle(liveCopy);
+  exitCopy.style.maxWidth=copyStyle.maxWidth;
+  exitCopy.style.width=copyStyle.width;
+  const liveHeading=liveCopy.querySelector('h1');
+  const exitHeading=exitCopy.querySelector('h1');
+  if(liveHeading&&exitHeading){
+   const headingStyle=getComputedStyle(liveHeading);
+   exitHeading.style.fontSize=headingStyle.fontSize;
+   exitHeading.style.lineHeight=headingStyle.lineHeight;
+   exitHeading.style.letterSpacing=headingStyle.letterSpacing;
+  }
+  root.current.appendChild(exitCopy);
+  gsap.set(from,{xPercent:0,opacity:1,zIndex:2,visibility:'visible'});
+  gsap.set(to,{xPercent:direction*100,opacity:1,zIndex:3,visibility:'visible'});
+  gsap.set(exitCopy,{xPercent:0,opacity:1});
+  gsap.set(liveCopy,{xPercent:direction*100,opacity:0});
+  if(fromIndex===0)gsap.set(person.current,{opacity:1});
+  if(toIndex===0)gsap.set(person.current,{xPercent:direction*60,opacity:0});
+  setActive(index);
+  const finish=()=>{
+   backgrounds.current.forEach((bg,i)=>{if(bg)gsap.set(bg,{xPercent:0,opacity:i===toIndex?1:0,zIndex:i===toIndex?1:0,clearProps:'transform,visibility'})});
+   gsap.set(liveCopy,{clearProps:'transform,opacity'});
+   gsap.set(person.current,{clearProps:'transform,opacity'});
+   exitCopy.remove();
+   busy.current=false;
+   if(mounted.current)setTransitioning(false);
+  };
+  requestAnimationFrame(()=>{
+   if(!mounted.current){finish();return;}
+   const tl=gsap.timeline({defaults:{ease:'power3.inOut'},onComplete:finish});
+   tl.to(from,{xPercent:-direction*100,duration:1.05},0)
+     .to(to,{xPercent:0,duration:1.05},0)
+     .to(exitCopy,{xPercent:-direction*110,opacity:0,duration:.82,ease:'power2.in'},0)
+     .to(liveCopy,{xPercent:0,opacity:1,duration:.85,ease:'power3.out'},.16);
+   if(fromIndex===0)tl.to(person.current,{xPercent:-direction*80,opacity:0,duration:.85},0);
+   else if(toIndex===0)tl.to(person.current,{xPercent:0,opacity:1,duration:.9,ease:'power3.out'},.14);
+  });
  });
- const selectRelative=(delta:number)=>choose(active===null?(delta>0?0:formats.length-1):(active+delta+formats.length)%formats.length);
+ const selectRelative=(delta:number)=>choose(active===null?(delta>0?0:formats.length-1):(active+delta+formats.length)%formats.length,delta>0?1:-1);
  const resetPointer=()=>{moveEnvironmentX.current?.(0);moveEnvironmentY.current?.(0);movePersonX.current?.(0);moveSpaceY.current?.(0)};
- return <section id="athlete" ref={root} className={`experience-hero ${current?'is-active':'is-overview'}`} aria-label="Форматы подготовки" aria-busy={transitioning} onPointerMove={event=>{
-  if(event.pointerType!=='mouse')return;
+ return <section id="athlete" ref={root} className={`experience-hero ${current?'is-active':'is-overview'}`} aria-label="Форматы подготовки" aria-busy={transitioning} onTouchStart={event=>{const t=event.touches[0];if(!t)return;swipe.current={x:t.clientX,y:t.clientY,ignore:t.clientX<28||Boolean((event.target as HTMLElement).closest('.portal-deck'))};}} onTouchEnd={event=>{const start=swipe.current;swipe.current=null;const t=event.changedTouches[0];if(!start||start.ignore||!t)return;const dx=t.clientX-start.x,dy=t.clientY-start.y;if(Math.abs(dx)>=65&&Math.abs(dx)>Math.abs(dy)*1.4)selectRelative(dx<0?1:-1);}} onTouchCancel={()=>{swipe.current=null}} onPointerMove={event=>{
+  if(event.pointerType!=='mouse'||busy.current)return;
   const box=event.currentTarget.getBoundingClientRect(),x=(event.clientX-box.left)/box.width-.5,y=(event.clientY-box.top)/box.height-.5;
   moveEnvironmentX.current?.(-x*18);moveEnvironmentY.current?.(-y*10);movePersonX.current?.(x*22);moveSpaceY.current?.(-x*5);
  }} onPointerLeave={resetPointer}>

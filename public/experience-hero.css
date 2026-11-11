@@ -8,7 +8,7 @@
 .is-active .experience-light{background:linear-gradient(90deg,#f1f4f5ed,#f1f4f5a6 37%,#f1f4f500 70%),linear-gradient(180deg,#f1f4f585,transparent 70%)}
 .experience-person{position:absolute;z-index:3;bottom:-22%;right:-3%;width:min(45vw,610px);aspect-ratio:2/3;pointer-events:none;transition:opacity .65s;will-change:transform;filter:drop-shadow(10px 18px 26px #17202022)}
 .experience-person svg{display:block;width:100%;height:100%;overflow:visible;filter:none!important}
-.is-active .experience-person{opacity:0!important}
+.is-active .experience-person{opacity:0}
 .experience-copy{position:absolute;z-index:6;left:4.5%;top:42px;max-width:65%;pointer-events:none}
 .experience-byline{font:550 10px/1.55 Onest,Arial,sans-serif;letter-spacing:.14em;color:#415250;margin:0 0 35px}
 .experience-copy h1{font:500 clamp(42px,4.5vw,78px)/1.1 Onest,Arial,sans-serif;letter-spacing:-.062em;color:#172020;margin:0;max-width:1000px}
@@ -123,4 +123,18 @@
 @media(prefers-reduced-motion:reduce){
  .experience-environment,.experience-person,.portal-space,.portal-surface{will-change:auto;transform:none!important}
  .portal-deck,.portal-card,.experience-person,.experience-cta,.experience-control-panel button{transition:none!important}
+}
+
+/* Horizontal cinematic scene changes: background and headline move in the same direction. */
+.experience-copy-exit{z-index:7!important;pointer-events:none!important;will-change:transform,opacity}
+.experience-hero[aria-busy="true"] .experience-person{transition:none}
+.experience-hero[aria-busy="true"] .experience-copy{will-change:transform,opacity}
+.experience-hero .experience-background{backface-visibility:hidden}
+.experience-hero .experience-control-panel button:focus-visible,
+.experience-hero .portal-card:focus-visible,
+.experience-hero .experience-cta:focus-visible{outline:3px solid #b83228;outline-offset:4px}
+@media(prefers-reduced-motion:reduce){
+ .experience-hero .experience-background,
+ .experience-hero .experience-copy,
+ .experience-hero .experience-copy-exit{transition:none!important;will-change:auto}
 }
