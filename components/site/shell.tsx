@@ -1,7 +1,7 @@
 'use client';
 import { useRef } from 'react';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
-export const sections = [['athlete','Главная'],['coach','Обо мне'],['method','Подход'],['services','Услуги'],['pace-lab','Темп'],['journal','Журнал']];
+export const sections = [['athlete','Главная'],['coach','О тренере'],['method','Метод'],['services','Услуги'],['journal','Журнал']];
 export function Arrow({className=''}:{className?:string}) { return <ArrowUpRight className={className} aria-hidden="true" size={20}/>; }
 export function Header() {
  const dialog=useRef<HTMLDialogElement>(null);
