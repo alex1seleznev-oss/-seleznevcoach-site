@@ -159,3 +159,46 @@
 @media(prefers-reduced-motion:reduce){
  .native-home .editorial-home .editorial-format-card img,.native-home .editorial-home .editorial-journal-feature,.native-home .editorial-home .editorial-inline-link{transition:none!important;transform:none!important}
 }
+
+/* A short, functional footer on the homepage. Full footer remains on inner pages. */
+.native-home footer.editorial-footer{background:#101d19!important;color:#f6f7f3!important;border:0!important;padding:clamp(55px,6vw,95px) max(4.5vw,calc((100vw - 1600px)/2)) 24px}
+.native-home .editorial-footer-main{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(40px,8vw,140px);align-items:end;padding-bottom:60px}
+.native-home .editorial-footer-label{font-size:10px;letter-spacing:.13em;font-weight:650;color:#c7d1ca;margin:0 0 28px}
+.native-home .editorial-footer-intro h2{font:680 clamp(54px,6.4vw,116px)/.98 Onest,Arial,sans-serif!important;letter-spacing:-.075em!important;color:#fff!important;margin:0 0 36px}
+.native-home .editorial-footer-action{display:inline-flex;align-items:center;justify-content:space-between;gap:35px;min-width:235px;padding:18px 20px;background:#b83228;color:#fff!important;font-size:13px;font-weight:600;text-decoration:none;transition:background .25s}
+.native-home .editorial-footer-action:hover{background:#93251e}
+.native-home .editorial-footer-meta{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+.native-home .editorial-footer-meta>div{border-top:1px solid #ffffff4a;padding-top:17px;min-width:0}
+.native-home .editorial-footer-meta span{display:block;margin-bottom:17px;font-size:10px;font-weight:600;letter-spacing:.12em;color:#d8b0a8}
+.native-home .editorial-footer-meta p{font-size:13px;line-height:1.65;color:#ffffffd6;margin:0 0 9px}
+.native-home .editorial-footer-meta a{display:flex;align-items:center;gap:6px;width:max-content;max-width:100%;margin:10px 0;color:#fff!important;text-decoration:none;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.native-home .editorial-footer-meta a:hover{text-decoration:underline;text-underline-offset:4px}
+.native-home .editorial-footer-map{border-top:1px solid #ffffff40;border-bottom:1px solid #ffffff40}
+.native-home .editorial-footer-map summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:21px 0;cursor:pointer;font-size:14px;font-weight:500}
+.native-home .editorial-footer-map summary::-webkit-details-marker{display:none}
+.native-home .editorial-footer-map summary svg{transition:transform .25s ease}
+.native-home .editorial-footer-map[open] summary svg{transform:rotate(180deg)}
+.native-home .editorial-footer-map .training-map{padding:24px;margin-bottom:20px;background:#f4f6f3;color:#15221e}
+.native-home .editorial-footer-bottom{display:flex;align-items:center;gap:24px;padding-top:23px;color:#c0ccc5;font-size:11px}
+.native-home .editorial-footer-mark{font:800 30px/1 Onest,Arial,sans-serif!important;letter-spacing:-.08em;color:#fff!important;text-decoration:none;margin-right:12px}
+.native-home .editorial-footer-mark span{color:#e27a65}
+.native-home .editorial-footer-bottom nav{display:flex;flex-wrap:wrap;gap:16px;margin-left:auto}
+.native-home .editorial-footer-bottom nav a{color:#c0ccc5!important;text-decoration:none}
+.native-home .editorial-footer-bottom nav a:hover{text-decoration:underline}
+.native-home footer.editorial-footer a:focus-visible,.native-home footer.editorial-footer summary:focus-visible{outline:2px solid #e8b1a4;outline-offset:4px}
+@media(max-width:900px){
+ .native-home .editorial-footer-main{grid-template-columns:1fr;gap:60px}
+ .native-home .editorial-footer-meta{max-width:680px}
+ .native-home .editorial-footer-bottom{flex-wrap:wrap}
+ .native-home .editorial-footer-bottom nav{width:100%;margin-left:0}
+}
+@media(max-width:540px){
+ .native-home footer.editorial-footer{padding:60px 20px 22px}
+ .native-home .editorial-footer-intro h2{font-size:clamp(46px,11vw,68px)!important}
+ .native-home .editorial-footer-main{gap:45px;padding-bottom:38px}
+ .native-home .editorial-footer-meta{grid-template-columns:1fr;gap:20px}
+ .native-home .editorial-footer-map .training-map{padding:10px}
+ .native-home .editorial-footer-bottom{gap:14px}
+ .native-home .editorial-footer-bottom nav{gap:12px}
+}
+@media(prefers-reduced-motion:reduce){.native-home .editorial-footer-action,.native-home .editorial-footer-map summary svg{transition:none!important}}
