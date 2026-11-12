@@ -2,7 +2,8 @@
 
 import {ArrowUpRight} from 'lucide-react';
 import {ExperienceHero} from './experience-hero';
-import {Header,Footer,Motion} from './shell';
+import {Header,Motion} from './shell';
+import {EditorialFooter} from './editorial-footer';
 import {Contact} from './contact';
 import {journal} from '@/lib/site-content';
 import athleteFacts from '../../config/athlete-facts.json';
@@ -83,7 +84,7 @@ export function Home(){
    </section>}
    <Contact/>
   </main>
-  <Footer/>
+  <EditorialFooter/>
   <Motion/>
  </>;
 }
